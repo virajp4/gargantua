@@ -59,21 +59,21 @@ Gargantua is a private personal finance application that allows you to track you
 
 ### 5. Wishlist Feature
 
-- **Add Wishlist Item**:
+- **Add Wishlist Item** (Simplified to 4 fields):
   - Item name
-  - Estimated cost
-  - Priority (high, medium, low)
-  - Target date (optional)
-  - Link/URL (optional)
-  - Notes
-- **Affordability Calculator**:
-  - Check if item is affordable based on current balance
-  - Show "Can Buy Now" or "Save X more needed"
-  - Calculate impact on balance after purchase
-- **Priority Sorting** - Sort by priority, cost, or date
-- **Convert to Expense** - Mark as purchased and automatically add to expenses
-- **Edit/Delete Wishlist Items**
-- **Savings Goal Tracker** - Track progress toward wishlist items
+  - Cost
+  - Priority (1-3: Low, Medium, High)
+  - Necessity (1-5: Want, Like, Need, Important, Critical)
+- **Smart Purchase Score System**:
+  - Calculates score based on (priority × necessity) / cost_ratio
+  - Normalized to 0-10 scale
+  - Shows affordability: balance >= cost
+  - Displays status: "Buy Now" (✅), "Consider" (⚠️), "Low Priority" (⏸️), or "Save ₹X more" (💰)
+  - Shows balance after purchase
+- **Integrated into Dashboard** - Displayed as table below transactions
+- **Priority and Necessity Badges** - Color-coded visual indicators
+- **Edit/Delete Wishlist Items** - Full CRUD operations
+- **No Separate Page** - All wishlist features in main dashboard
 
 ### 6. Analytics & Reports
 
@@ -146,46 +146,34 @@ Gargantua is a private personal finance application that allows you to track you
 - updated_at (timestamp)
 ```
 
-#### 2. income
+#### 2. transactions
 
 ```sql
 - id (uuid, primary key)
 - user_id (uuid, references profiles)
+- type (text: 'income' or 'expense')
 - amount (decimal)
-- source (text)
-- category (text)
 - date (date)
-- description (text)
+- category (text, nullable)
+- description (text, nullable)
+- source (text, nullable - for income)
+- payment_method (text, nullable - for expenses)
+- is_recurring (boolean, default false - for expenses)
 - created_at (timestamp)
 - updated_at (timestamp)
 ```
 
-#### 3. expenses
-
-```sql
-- id (uuid, primary key)
-- user_id (uuid, references profiles)
-- amount (decimal)
-- category (text)
-- payment_method (text)
-- date (date)
-- description (text)
-- is_recurring (boolean)
-- created_at (timestamp)
-- updated_at (timestamp)
-```
+**Note**: The `transactions` table consolidates both income and expenses into a single unified table with a `type` field to distinguish between them. Income-specific fields (source) and expense-specific fields (payment_method, is_recurring) are nullable.
 
 #### 4. wishlist
 
 ```sql
 - id (uuid, primary key)
-- user_id (uuid, references profiles)
+- user_id (uuid, references auth.users)
 - item_name (text)
-- estimated_cost (decimal)
-- priority (enum: high, medium, low)
-- target_date (date, nullable)
-- url (text, nullable)
-- notes (text)
+- cost (decimal)
+- priority (integer: 1-3) -- 1=Low, 2=Medium, 3=High
+- necessity (integer: 1-5) -- 1=Want, 2=Like, 3=Need, 4=Important, 5=Critical
 - is_purchased (boolean)
 - created_at (timestamp)
 - updated_at (timestamp)
@@ -227,13 +215,7 @@ gargantua/
 │   │       └── page.tsx
 │   ├── (dashboard)/
 │   │   ├── layout.tsx          # Protected layout with auth check
-│   │   ├── page.tsx            # Dashboard home
-│   │   ├── income/
-│   │   │   └── page.tsx        # Income management
-│   │   ├── expenses/
-│   │   │   └── page.tsx        # Expense tracking
-│   │   ├── wishlist/
-│   │   │   └── page.tsx        # Wishlist feature
+│   │   ├── page.tsx            # Dashboard home (unified transactions + wishlist)
 │   │   ├── analytics/
 │   │   │   └── page.tsx        # Analytics & reports
 │   │   └── settings/
@@ -246,33 +228,34 @@ gargantua/
 │   └── globals.css             # Global styles
 ├── components/
 │   ├── ui/                     # shadcn/ui components
-│   ├── forms/
-│   │   ├── income-form.tsx
-│   │   ├── expense-form.tsx
-│   │   └── wishlist-form.tsx
-│   ├── charts/
-│   │   ├── spending-chart.tsx
-│   │   ├── trend-chart.tsx
-│   │   └── category-chart.tsx
+│   ├── dialogs/
+│   │   ├── IncomeDialog.tsx
+│   │   ├── ExpenseDialog.tsx
+│   │   ├── WishlistDialog.tsx
+│   │   └── DeleteConfirmationDialog.tsx
 │   ├── layout/
-│   │   ├── navbar.tsx
-│   │   ├── sidebar.tsx
-│   │   └── footer.tsx
+│   │   └── navbar.tsx
 │   └── dashboard/
-│       ├── balance-card.tsx
-│       ├── quick-stats.tsx
-│       └── recent-transactions.tsx
+│       ├── StatsOverview.tsx
+│       ├── StatsCard.tsx
+│       ├── TransactionFilters.tsx
+│       └── TransactionsTable.tsx
 ├── lib/
 │   ├── supabase/
 │   │   ├── client.ts           # Client-side Supabase client
 │   │   ├── server.ts           # Server-side Supabase client
-│   │   └── middleware.ts       # Auth middleware
+│   │   ├── middleware.ts       # Auth middleware
+│   │   └── helpers.ts          # Schema helpers
+│   ├── services/
+│   │   └── transactions.ts     # Transaction service layer
 │   ├── utils.ts                # Utility functions
 │   └── validations.ts          # Form validation schemas
 ├── hooks/
-│   ├── use-income.ts
-│   ├── use-expenses.ts
-│   ├── use-wishlist.ts
+│   ├── useTransactions.ts          # Unified hook for income & expenses
+│   ├── useTransactionDialogs.ts    # Dialog state management
+│   ├── useRealtimeTransactions.ts  # Real-time subscriptions
+│   ├── useDashboardStats.ts        # Dashboard statistics
+│   ├── useWishlist.ts              # Wishlist management
 │   └── use-auth.ts
 ├── types/
 │   ├── database.ts             # Database types
@@ -360,16 +343,16 @@ npm install @supabase/supabase-js @supabase/ssr
 
 ```sql
 -- Enable RLS
-ALTER TABLE income ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
--- Policy: Users can only see their own income
-CREATE POLICY "Users can view own income"
-  ON income FOR SELECT
+-- Policy: Users can only see their own transactions
+CREATE POLICY "Users can view own transactions"
+  ON transactions FOR SELECT
   USING (auth.uid() = user_id);
 
--- Policy: Users can insert their own income
-CREATE POLICY "Users can insert own income"
-  ON income FOR INSERT
+-- Policy: Users can insert their own transactions
+CREATE POLICY "Users can insert own transactions"
+  ON transactions FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 ```
 
@@ -383,10 +366,9 @@ CREATE POLICY "Users can insert own income"
 
 **Key Components:**
 
-- Dashboard: `app/(dashboard)/page.tsx`
-- Income: `app/(dashboard)/income/page.tsx`
-- Expenses: `app/(dashboard)/expenses/page.tsx`
+- Dashboard: `app/(dashboard)/page.tsx` (unified transactions view)
 - Wishlist: `app/(dashboard)/wishlist/page.tsx`
+- Settings: `app/(dashboard)/settings/page.tsx`
 
 ### Phase 5: Analytics & Enhancement
 
@@ -460,12 +442,21 @@ balance = totalIncome - totalExpenses;
 savingsRate = ((totalIncome - totalExpenses) / totalIncome) * 100;
 ```
 
-### Wishlist Affordability
+### Wishlist Purchase Score & Affordability
 
 ```typescript
-canAfford = currentBalance >= estimatedCost;
-amountNeeded = estimatedCost - currentBalance;
-balanceAfterPurchase = currentBalance - estimatedCost;
+isAffordable = currentBalance >= cost;
+amountNeeded = cost - currentBalance;
+balanceAfterPurchase = currentBalance - cost;
+
+costRatio = Math.min(cost / Math.max(balance, 1), 2);
+rawScore = (priority * necessity) / costRatio;
+purchaseScore = Math.min((rawScore / 15) * 10, 10);
+
+if (!isAffordable) status = "Save More";
+else if (purchaseScore >= 7) status = "Buy Now";
+else if (purchaseScore >= 4) status = "Consider";
+else status = "Low Priority";
 ```
 
 ### Budget Utilization

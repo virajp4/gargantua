@@ -8,77 +8,47 @@ export type Database = {
   };
   gargantua: {
     Tables: {
-      expenses: {
+      transactions: {
         Row: {
           amount: number;
-          category: string;
-          created_at: string;
+          category: string | null;
+          created_at: string | null;
           date: string;
           description: string | null;
           id: string;
           is_recurring: boolean | null;
-          payment_method: string;
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          amount: number;
-          category: string;
-          created_at?: string;
-          date: string;
-          description?: string | null;
-          id?: string;
-          is_recurring?: boolean | null;
-          payment_method: string;
-          updated_at?: string;
-          user_id: string;
-        };
-        Update: {
-          amount?: number;
-          category?: string;
-          created_at?: string;
-          date?: string;
-          description?: string | null;
-          id?: string;
-          is_recurring?: boolean | null;
-          payment_method?: string;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
-      income: {
-        Row: {
-          amount: number;
-          category: string | null;
-          created_at: string;
-          date: string;
-          description: string | null;
-          id: string;
-          source: string;
-          updated_at: string;
+          payment_method: string | null;
+          source: string | null;
+          type: string;
+          updated_at: string | null;
           user_id: string;
         };
         Insert: {
           amount: number;
           category?: string | null;
-          created_at?: string;
+          created_at?: string | null;
           date: string;
           description?: string | null;
           id?: string;
-          source: string;
-          updated_at?: string;
+          is_recurring?: boolean | null;
+          payment_method?: string | null;
+          source?: string | null;
+          type: string;
+          updated_at?: string | null;
           user_id: string;
         };
         Update: {
           amount?: number;
           category?: string | null;
-          created_at?: string;
+          created_at?: string | null;
           date?: string;
           description?: string | null;
           id?: string;
-          source?: string;
-          updated_at?: string;
+          is_recurring?: boolean | null;
+          payment_method?: string | null;
+          source?: string | null;
+          type?: string;
+          updated_at?: string | null;
           user_id?: string;
         };
         Relationships: [];
@@ -115,42 +85,36 @@ export type Database = {
       };
       wishlist: {
         Row: {
-          created_at: string;
-          estimated_cost: number;
+          cost: number;
+          created_at: string | null;
           id: string;
           is_purchased: boolean | null;
           item_name: string;
-          notes: string | null;
-          priority: string;
-          target_date: string | null;
-          updated_at: string;
-          url: string | null;
+          necessity: number;
+          priority: number;
+          updated_at: string | null;
           user_id: string;
         };
         Insert: {
-          created_at?: string;
-          estimated_cost: number;
+          cost: number;
+          created_at?: string | null;
           id?: string;
           is_purchased?: boolean | null;
           item_name: string;
-          notes?: string | null;
-          priority: string;
-          target_date?: string | null;
-          updated_at?: string;
-          url?: string | null;
+          necessity: number;
+          priority: number;
+          updated_at?: string | null;
           user_id: string;
         };
         Update: {
-          created_at?: string;
-          estimated_cost?: number;
+          cost?: number;
+          created_at?: string | null;
           id?: string;
           is_purchased?: boolean | null;
           item_name?: string;
-          notes?: string | null;
-          priority?: string;
-          target_date?: string | null;
-          updated_at?: string;
-          url?: string | null;
+          necessity?: number;
+          priority?: number;
+          updated_at?: string | null;
           user_id?: string;
         };
         Relationships: [];

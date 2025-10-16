@@ -11,16 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Home,
-  TrendingUp,
-  TrendingDown,
-  Heart,
-  BarChart3,
-  Settings,
-  LogOut,
-  Menu,
-} from "lucide-react";
+import { Home, BarChart3, Settings, LogOut, Menu } from "lucide-react";
 import { toast } from "sonner";
 
 export function Navbar() {
@@ -35,7 +26,7 @@ export function Navbar() {
   };
 
   return (
-    <nav className="border-b bg-background">
+    <nav className="border-b mx-auto max-w-7xl">
       <div className="flex h-16 items-center px-4 md:px-6">
         <Link href="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold">Gargantua</span>
@@ -47,24 +38,6 @@ export function Navbar() {
             <Button variant="ghost" size="sm" className="gap-2">
               <Home className="h-4 w-4" />
               Dashboard
-            </Button>
-          </Link>
-          <Link href="/income">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Income
-            </Button>
-          </Link>
-          <Link href="/expenses">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <TrendingDown className="h-4 w-4" />
-              Expenses
-            </Button>
-          </Link>
-          <Link href="/wishlist">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Heart className="h-4 w-4" />
-              Wishlist
             </Button>
           </Link>
           <Link href="/analytics">
@@ -103,24 +76,6 @@ export function Navbar() {
                   <DropdownMenuItem>
                     <Home className="mr-2 h-4 w-4" />
                     Dashboard
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/income">
-                  <DropdownMenuItem>
-                    <TrendingUp className="mr-2 h-4 w-4" />
-                    Income
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/expenses">
-                  <DropdownMenuItem>
-                    <TrendingDown className="mr-2 h-4 w-4" />
-                    Expenses
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/wishlist">
-                  <DropdownMenuItem>
-                    <Heart className="mr-2 h-4 w-4" />
-                    Wishlist
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/analytics">

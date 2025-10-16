@@ -46,8 +46,7 @@ Gargantua is a private personal finance tracker built with Next.js, TypeScript, 
 - ✅ PostgreSQL schema-based isolation (`gargantua` schema)
 - ✅ Shared tables (`public.profiles`, `public.project_access`)
 - ✅ Gargantua-specific tables:
-  - `gargantua.income`
-  - `gargantua.expenses`
+  - `gargantua.transactions` (unified income & expenses)
   - `gargantua.wishlist`
   - `gargantua.user_settings`
 - ✅ Row Level Security (RLS) policies
@@ -78,8 +77,7 @@ Shared Supabase Project (viraj.app)
 │   ├── profiles (all users)
 │   └── project_access (authorization registry)
 ├── gargantua schema (gargantua.viraj.app)
-│   ├── income
-│   ├── expenses
+│   ├── transactions (unified income & expenses with type field)
 │   ├── wishlist
 │   └── user_settings
 ├── blog schema (future: blog.viraj.app)
@@ -110,17 +108,17 @@ gargantua/
 │   │   └── unauthorized/page.tsx    ✅ Access denied page
 │   ├── (dashboard)/
 │   │   ├── layout.tsx               ✅ Protected layout
-│   │   ├── page.tsx                 ✅ Dashboard home (placeholder)
-│   │   ├── income/page.tsx          🚧 Income CRUD (to implement)
-│   │   ├── expenses/page.tsx        🚧 Expense CRUD (to implement)
-│   │   ├── wishlist/page.tsx        🚧 Wishlist + affordability (to implement)
+│   │   ├── page.tsx                 ✅ Dashboard with unified transactions view
+│   │   ├── wishlist/page.tsx        ✅ Wishlist + affordability calculator
 │   │   ├── analytics/page.tsx       🚧 Charts & reports (to implement)
-│   │   └── settings/page.tsx        🚧 User settings (to implement)
+│   │   └── settings/page.tsx        ✅ User settings & profile
 │   ├── api/auth/callback/route.ts   ✅ OAuth callback
 │   ├── layout.tsx                   ✅ Root layout
 │   └── globals.css                  ✅ Global styles
 ├── components/
 │   ├── ui/                          ✅ shadcn/ui components
+│   ├── dialogs/                     ✅ Dialog components (Income, Expense, Wishlist, Delete)
+│   ├── dashboard/                   ✅ Dashboard components (Stats, Filters, Table)
 │   └── layout/navbar.tsx            ✅ Navigation bar
 ├── lib/
 │   ├── supabase/
@@ -128,10 +126,19 @@ gargantua/
 │   │   ├── server.ts                ✅ Server client
 │   │   ├── middleware.ts            ✅ Auth middleware
 │   │   └── helpers.ts               ✅ Schema helpers
-│   └── utils.ts                     ✅ Utility functions
+│   ├── services/
+│   │   └── transactions.ts          ✅ Transaction service with unified CRUD
+│   ├── utils.ts                     ✅ Utility functions
+│   └── validations.ts               ✅ Form validation schemas
 ├── types/
-│   ├── database.ts                  ✅ Database types
-│   └── index.ts                     ✅ Shared types
+│   ├── database.types.ts            ✅ Auto-generated database types
+│   └── index.ts                     ✅ Shared types & enums (TransactionType, Priority, etc.)
+├── hooks/
+│   ├── useTransactions.ts           ✅ Unified transactions hook with real-time
+│   ├── useTransactionDialogs.ts     ✅ Dialog state management
+│   ├── useRealtimeTransactions.ts   ✅ Real-time subscription handler
+│   ├── useDashboardStats.ts         ✅ Dashboard statistics
+│   └── useWishlist.ts               ✅ Wishlist management
 ├── docs/                            ✅ Documentation
 ├── middleware.ts                    ✅ Next.js middleware
 ├── supabase-schema.sql              ✅ Original schema
@@ -174,22 +181,20 @@ gargantua/
 
 ### Gargantua Tables (gargantua schema)
 
-**gargantua.income**
+**gargantua.transactions**
 
 ```sql
-id, user_id, amount, source, category, date, description, created_at, updated_at
+id, user_id, type (income/expense), amount, date, category, description,
+source (for income), payment_method (for expenses), is_recurring (for expenses),
+created_at, updated_at
 ```
 
-**gargantua.expenses**
-
-```sql
-id, user_id, amount, category, payment_method, date, description, is_recurring, created_at, updated_at
-```
+**Architecture Note**: The transactions table uses a unified structure with a `type` field to distinguish between income and expense entries. This simplifies queries, real-time subscriptions, and data management while maintaining all required fields for both transaction types.
 
 **gargantua.wishlist**
 
 ```sql
-id, user_id, item_name, estimated_cost, priority, target_date, url, notes, is_purchased, created_at, updated_at
+id, user_id, item_name, cost, priority (1-3), necessity (1-5), is_purchased, created_at, updated_at
 ```
 
 **gargantua.user_settings**
@@ -241,19 +246,21 @@ id, user_id, currency, date_format, theme, created_at, updated_at
 
 #### 4. Wishlist Feature
 
-- [ ] Create wishlist form component
-- [ ] Implement CRUD operations:
-  - Add wishlist item
-  - View wishlist (sortable by priority, cost, date)
+- [x] Create wishlist form component (simplified with 4 fields only)
+- [x] Implement CRUD operations:
+  - Add wishlist item (name, cost, priority 1-3, necessity 1-5)
+  - View wishlist in table format on dashboard
   - Edit wishlist item
   - Delete wishlist item
-- [ ] Affordability calculator:
-  - Check if balance >= estimated cost
-  - Show "Can Buy Now" or "Save $X more"
+- [x] Smart purchase score calculator:
+  - Calculate score based on (priority × necessity) / cost_ratio
+  - Check if balance >= cost
+  - Show status: "Buy Now", "Consider", "Low Priority", or "Save ₹X more"
   - Display balance after purchase
-- [ ] "Convert to Expense" functionality
-- [ ] Priority badges (high/medium/low)
-- [ ] Create custom hook: `hooks/use-wishlist.ts`
+  - Show purchase score (0-10 scale)
+- [x] Priority and necessity badges with color coding
+- [x] Integrated into dashboard (no separate page)
+- [x] Custom hook: `hooks/useWishlist.ts`
 
 #### 5. Analytics Page
 
@@ -365,19 +372,20 @@ npm run lint
 - [x] User can log in with Google OAuth
 - [x] User is authorized based on email/ID
 - [x] Protected dashboard is accessible only to authorized users
-- [ ] User can add, view, edit, and delete income
-- [ ] User can add, view, edit, and delete expenses
-- [ ] User can add, view, edit, and delete wishlist items
-- [ ] Dashboard shows current balance and basic stats
-- [ ] Wishlist shows affordability status
+- [x] User can add, view, edit, and delete income
+- [x] User can add, view, edit, and delete expenses
+- [x] User can add, view, edit, and delete wishlist items
+- [x] Dashboard shows current balance and basic stats
+- [x] Wishlist shows affordability status
+- [x] Real-time updates for all transactions
 
 ### Should Have (P1)
 
-- [ ] User can filter income/expenses by date range
+- [x] User can filter income/expenses by type, category, and sort
+- [x] User can mark wishlist items as purchased
+- [x] Responsive design works on mobile
 - [ ] User can see spending by category (chart)
 - [ ] User can see income vs expenses trend (chart)
-- [ ] User can mark wishlist items as purchased
-- [ ] Responsive design works on mobile
 
 ### Nice to Have (P2)
 
@@ -393,9 +401,19 @@ npm run lint
 
 **Phase 1 Complete**: Infrastructure, authentication, and database architecture are fully set up and tested.
 
-**Next**: Begin Phase 2 feature development starting with the Dashboard.
+**Phase 2 Complete**: Core features implemented including:
+
+- ✅ Unified transactions table (income + expenses)
+- ✅ Dashboard with real-time statistics
+- ✅ Transaction CRUD with filters and pagination
+- ✅ Wishlist with affordability calculator
+- ✅ Real-time subscriptions for live updates
+- ✅ Service layer architecture
+- ✅ Type-safe enums (TransactionType, Priority, etc.)
+
+**Next**: Implement analytics with charts and visualizations
 
 ---
 
-**Last Updated**: 2025-10-15
-**Status**: Ready for feature development 🚀
+**Last Updated**: 2025-10-16
+**Status**: MVP Core Features Complete 🎉

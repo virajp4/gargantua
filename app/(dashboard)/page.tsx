@@ -1,36 +1,98 @@
+"use client";
+
+import { useTransactions } from "@/hooks/useTransactions";
+import { useTransactionDialogs } from "@/hooks/useTransactionDialogs";
+import { StatsOverview } from "@/components/dashboard/StatsOverview";
+import { TransactionFilters } from "@/components/dashboard/TransactionFilters";
+import { TransactionsTable } from "@/components/dashboard/TransactionsTable";
+import { WishlistCard } from "@/components/dashboard/WishlistCard";
+import { IncomeDialog } from "@/components/dialogs/IncomeDialog";
+import { ExpenseDialog } from "@/components/dialogs/ExpenseDialog";
+import { DeleteConfirmationDialog } from "@/components/dialogs/DeleteConfirmationDialog";
+import { Card } from "@/components/ui/card";
+import { TransactionType } from "@/types";
+import { calculateDashboardStats } from "@/lib/utils";
+import TransactionButtons from "@/components/dashboard/TransactionButtons";
+
 export default function DashboardPage() {
+  const {
+    transactions,
+    allTransactions,
+    loading,
+    currentPage,
+    totalPages,
+    filters,
+    setFilters,
+    setCurrentPage,
+    addTransaction,
+    updateTransaction,
+    deleteTransaction,
+  } = useTransactions();
+  const {
+    incomeDialogOpen,
+    expenseDialogOpen,
+    deleteDialogOpen,
+    setIncomeDialogOpen,
+    setExpenseDialogOpen,
+    setDeleteDialogOpen,
+    editingTransaction,
+    deletingTransaction,
+    handleAddIncome,
+    handleAddExpense,
+    handleEditTransaction,
+    handleDeleteTransaction,
+    handleIncomeSubmit,
+    handleExpenseSubmit,
+    confirmDelete,
+  } = useTransactionDialogs({
+    addTransaction,
+    updateTransaction,
+    deleteTransaction,
+  });
+  const stats = calculateDashboardStats(allTransactions);
+  // TODO: Add a max-w-3xl after adding analytics to the table card
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome to your personal finance tracker</p>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm font-medium text-muted-foreground">Current Balance</p>
-          <p className="text-2xl font-bold">$0.00</p>
-        </div>
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm font-medium text-muted-foreground">This Month Income</p>
-          <p className="text-2xl font-bold text-green-600">$0.00</p>
-        </div>
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm font-medium text-muted-foreground">This Month Expenses</p>
-          <p className="text-2xl font-bold text-red-600">$0.00</p>
-        </div>
-        <div className="rounded-lg border bg-card p-6">
-          <p className="text-sm font-medium text-muted-foreground">Savings Rate</p>
-          <p className="text-2xl font-bold">0%</p>
-        </div>
-      </div>
-
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="text-xl font-semibold mb-4">Recent Transactions</h2>
-        <p className="text-muted-foreground">
-          No transactions yet. Start by adding income or expenses.
-        </p>
-      </div>
+      <StatsOverview allTransactions={allTransactions} loading={loading} />
+      <Card className="p-4 flex flex-col gap-4">
+        <TransactionButtons handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
+        <TransactionFilters filters={filters} setFilters={setFilters} />
+        <TransactionsTable
+          transactions={transactions}
+          loading={loading}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+          onEdit={handleEditTransaction}
+          onDelete={handleDeleteTransaction}
+        />
+      </Card>
+      <WishlistCard balance={stats.balance} />
+      <IncomeDialog
+        open={incomeDialogOpen}
+        onOpenChange={setIncomeDialogOpen}
+        onSubmit={handleIncomeSubmit}
+        editData={
+          editingTransaction?.type === TransactionType.INCOME ? editingTransaction : undefined
+        }
+      />
+      <ExpenseDialog
+        open={expenseDialogOpen}
+        onOpenChange={setExpenseDialogOpen}
+        onSubmit={handleExpenseSubmit}
+        editData={
+          editingTransaction?.type === TransactionType.EXPENSE ? editingTransaction : undefined
+        }
+      />
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        title={`Delete ${
+          deletingTransaction?.type === TransactionType.INCOME ? "Income" : "Expense"
+        }`}
+        description={`Are you sure you want to delete this ${deletingTransaction?.type} entry? This action cannot be undone.`}
+      />
     </div>
   );
 }

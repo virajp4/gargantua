@@ -52,9 +52,9 @@ export default function DashboardPage() {
   const stats = calculateDashboardStats(allTransactions);
   // TODO: Add a max-w-3xl after adding analytics to the table card
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <StatsOverview allTransactions={allTransactions} loading={loading} />
-      <Card className="p-4 flex flex-col gap-4">
+      <Card className="p-6 flex flex-col gap-4 shadow-sm border-border/50">
         <TransactionButtons handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
         <TransactionFilters filters={filters} setFilters={setFilters} />
         <TransactionsTable

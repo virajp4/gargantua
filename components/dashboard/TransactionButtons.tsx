@@ -11,7 +11,7 @@ export default function TransactionButtons({
   handleAddExpense,
 }: TransactionButtonsProps) {
   return (
-    <div className="flex items-center justify-between gap-2 flex-wrap">
+    <div className="flex items-center justify-between gap-2.5 flex-wrap">
       <h2 className="text-xl font-semibold">All Transactions</h2>
       <div className="flex gap-2">
         <Button onClick={handleAddIncome} size="sm" variant="outline">

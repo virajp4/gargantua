@@ -29,11 +29,3 @@ export const wishlistSchema = z.object({
 });
 
 export type WishlistFormData = z.infer<typeof wishlistSchema>;
-
-export const userSettingsSchema = z.object({
-  currency: z.string().optional(),
-  dateFormat: z.string().optional(),
-  theme: z.string().optional(),
-});
-
-export type UserSettingsFormData = z.infer<typeof userSettingsSchema>;

@@ -87,7 +87,7 @@ export function WishlistCard({ balance }: WishlistCardProps) {
 
   return (
     <>
-      <Card className="flex flex-col gap-4 p-4">
+      <Card className="flex flex-col gap-4 p-6 shadow-sm border-border/50">
         <div className="flex items-start justify-between">
           <h2 className="text-xl font-semibold">Wishlist</h2>
           <Button onClick={handleAddItem} variant="outline" size="sm">

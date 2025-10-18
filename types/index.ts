@@ -13,10 +13,6 @@ export type WishlistItem = Database["gargantua"]["Tables"]["wishlist"]["Row"];
 export type WishlistInsert = Database["gargantua"]["Tables"]["wishlist"]["Insert"];
 export type WishlistUpdate = Database["gargantua"]["Tables"]["wishlist"]["Update"];
 
-export type UserSettings = Database["gargantua"]["Tables"]["user_settings"]["Row"];
-export type UserSettingsInsert = Database["gargantua"]["Tables"]["user_settings"]["Insert"];
-export type UserSettingsUpdate = Database["gargantua"]["Tables"]["user_settings"]["Update"];
-
 // Enums for easier usage and type safety
 export enum TransactionType {
   INCOME = "income",

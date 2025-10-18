@@ -16,9 +16,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect("/unauthorized");
   }
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto max-w-7xl py-6 px-4 md:px-6">{children}</main>
+      <main className="container mx-auto max-w-7xl py-8 px-4 md:px-6">{children}</main>
     </div>
   );
 }

@@ -1,12 +1,16 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { TransactionType } from "@/types";
 import { Filters, SortBy, SortOrder } from "@/hooks/useTransactions";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowDownAZ,
+  ArrowUpAZ,
+  Calendar,
+  DollarSign,
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TransactionFiltersProps {
   filters: Filters;
@@ -14,45 +18,98 @@ interface TransactionFiltersProps {
 }
 
 export function TransactionFilters({ filters, setFilters }: TransactionFiltersProps) {
+  const handleSortToggle = (sortBy: SortBy) => {
+    if (filters.sortBy === sortBy) {
+      setFilters({
+        ...filters,
+        sortOrder: filters.sortOrder === "desc" ? "asc" : "desc",
+      });
+    } else {
+      setFilters({ ...filters, sortBy, sortOrder: "desc" });
+    }
+  };
+
   return (
-    <div className="flex flex-wrap gap-2">
-      <Select
-        value={filters.type}
-        onValueChange={(value) => setFilters({ ...filters, type: value as TransactionType })}
-      >
-        <SelectTrigger className="w-[150px]">
-          <SelectValue placeholder="Type" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value={TransactionType.INCOME}>Income</SelectItem>
-          <SelectItem value={TransactionType.EXPENSE}>Expense</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select
-        value={filters.sortBy}
-        onValueChange={(value) => setFilters({ ...filters, sortBy: value as SortBy })}
-      >
-        <SelectTrigger className="w-[150px]">
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="date">Date</SelectItem>
-          <SelectItem value="amount">Amount</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select
-        value={filters.sortOrder}
-        onValueChange={(value) => setFilters({ ...filters, sortOrder: value as SortOrder })}
-      >
-        <SelectTrigger className="w-[150px]">
-          <SelectValue placeholder="Order" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="desc">Descending</SelectItem>
-          <SelectItem value="asc">Ascending</SelectItem>
-        </SelectContent>
-      </Select>
+    <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
+        <Button
+          variant={filters.type === "all" ? "secondary" : "ghost"}
+          size="icon"
+          onClick={() => setFilters({ ...filters, type: "all" })}
+          className={cn(
+            "transition-all duration-200 h-8 w-8",
+            filters.type === "all" &&
+              "shadow-sm bg-blue-100 dark:bg-blue-900/30 text-blue-900 dark:text-blue-200 hover:bg-blue-100 hover:dark:bg-blue-900/30"
+          )}
+          aria-label="All transactions"
+        >
+          <Wallet className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={filters.type === TransactionType.INCOME ? "secondary" : "ghost"}
+          size="icon"
+          onClick={() => setFilters({ ...filters, type: TransactionType.INCOME })}
+          className={cn(
+            "transition-all duration-200 h-8 w-8",
+            filters.type === TransactionType.INCOME &&
+              "shadow-sm bg-green-100 dark:bg-green-900/30 text-green-900 dark:text-green-200 hover:bg-green-100 hover:dark:bg-green-900/30"
+          )}
+          aria-label="Income transactions"
+        >
+          <TrendingUp className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={filters.type === TransactionType.EXPENSE ? "secondary" : "ghost"}
+          size="icon"
+          onClick={() => setFilters({ ...filters, type: TransactionType.EXPENSE })}
+          className={cn(
+            "transition-all duration-200 h-8 w-8",
+            filters.type === TransactionType.EXPENSE &&
+              "shadow-sm bg-red-100 dark:bg-red-900/30 text-red-900 dark:text-red-200 hover:bg-red-100 hover:dark:bg-red-900/30"
+          )}
+          aria-label="Expense transactions"
+        >
+          <TrendingDown className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant={filters.sortBy === "date" ? "secondary" : "ghost"}
+          size="sm"
+          onClick={() => handleSortToggle("date")}
+          className={cn(
+            "gap-1.5 transition-all duration-200",
+            filters.sortBy === "date" && "shadow-sm"
+          )}
+        >
+          <Calendar className="h-3.5 w-3.5" />
+          Date
+          {filters.sortBy === "date" &&
+            (filters.sortOrder === "desc" ? (
+              <ArrowDownAZ className="h-3.5 w-3.5 transition-transform duration-200" />
+            ) : (
+              <ArrowUpAZ className="h-3.5 w-3.5 transition-transform duration-200" />
+            ))}
+        </Button>
+        <Button
+          variant={filters.sortBy === "amount" ? "secondary" : "ghost"}
+          size="sm"
+          onClick={() => handleSortToggle("amount")}
+          className={cn(
+            "gap-1.5 transition-all duration-200",
+            filters.sortBy === "amount" && "shadow-sm"
+          )}
+        >
+          <DollarSign className="h-3.5 w-3.5" />
+          Amount
+          {filters.sortBy === "amount" &&
+            (filters.sortOrder === "desc" ? (
+              <ArrowDownAZ className="h-3.5 w-3.5 transition-transform duration-200" />
+            ) : (
+              <ArrowUpAZ className="h-3.5 w-3.5 transition-transform duration-200" />
+            ))}
+        </Button>
+      </div>
     </div>
   );
 }

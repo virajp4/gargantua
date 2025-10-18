@@ -42,21 +42,23 @@ export function getTodayDate(): string {
 export function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
     // Expense categories
-    food: "bg-orange-100 text-orange-800",
-    transport: "bg-blue-100 text-blue-800",
-    entertainment: "bg-purple-100 text-purple-800",
-    bills: "bg-red-100 text-red-800",
-    shopping: "bg-pink-100 text-pink-800",
-    health: "bg-green-100 text-green-800",
-    education: "bg-indigo-100 text-indigo-800",
-    travel: "bg-cyan-100 text-cyan-800",
-    other: "bg-gray-100 text-gray-800",
+    food: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300",
+    transport: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
+    entertainment: "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300",
+    bills: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
+    shopping: "bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300",
+    health: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
+    education: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300",
+    travel: "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-300",
+    other: "bg-gray-100 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300",
     // Priority levels
-    high: "bg-red-100 text-red-800",
-    medium: "bg-yellow-100 text-yellow-800",
-    low: "bg-green-100 text-green-800",
+    high: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
+    medium: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300",
+    low: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
   };
-  return category ? colors[category.toLowerCase()] : "bg-gray-100 text-gray-800";
+  return category
+    ? colors[category.toLowerCase()]
+    : "bg-gray-100 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300";
 }
 
 export type DashboardStats = {
@@ -168,19 +170,19 @@ export function calculatePurchaseStatus(
 
   if (!isAffordable) {
     status = "Do Not Open The Hatch";
-    statusColor = "bg-red-100 text-red-800";
+    statusColor = "bg-red-100 dark:bg-red-900/40 text-red-900 dark:text-red-200";
   } else if (!isWithinSafeSpend) {
     status = `Exceeds Gravity Pull: ${formatCurrency(safeSpendLimit)}`;
-    statusColor = "bg-orange-100 text-orange-800";
+    statusColor = "bg-orange-100 dark:bg-orange-900/40 text-orange-900 dark:text-orange-200";
   } else if (purchaseScore >= 70) {
     status = "Go For Docking";
-    statusColor = "bg-green-100 text-green-800";
+    statusColor = "bg-green-100 dark:bg-green-900/40 text-green-900 dark:text-green-200";
   } else if (purchaseScore >= 40) {
     status = "Slipping Towards Gargantua";
-    statusColor = "bg-yellow-100 text-yellow-800";
+    statusColor = "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-900 dark:text-yellow-200";
   } else {
     status = "Out Of Orbit";
-    statusColor = "bg-gray-100 text-gray-800";
+    statusColor = "bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-gray-200";
   }
   return { purchaseScore, status, statusColor };
 }
@@ -190,9 +192,9 @@ export function calculatePurchaseStatus(
  */
 export function getPriorityColor(priority: number): string {
   const colors: Record<number, string> = {
-    1: "bg-gray-100 text-gray-800",
-    2: "bg-blue-100 text-blue-800",
-    3: "bg-red-100 text-red-800",
+    1: "bg-gray-100 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300",
+    2: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
+    3: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
   };
   return colors[priority] ?? colors[1];
 }
@@ -202,11 +204,11 @@ export function getPriorityColor(priority: number): string {
  */
 export function getNecessityColor(necessity: number): string {
   const colors: Record<number, string> = {
-    1: "bg-gray-100 text-gray-800",
-    2: "bg-blue-100 text-blue-800",
-    3: "bg-yellow-100 text-yellow-800",
-    4: "bg-orange-100 text-orange-800",
-    5: "bg-red-100 text-red-800",
+    1: "bg-gray-100 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300",
+    2: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300",
+    3: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300",
+    4: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300",
+    5: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
   };
   return colors[necessity] ?? colors[1];
 }

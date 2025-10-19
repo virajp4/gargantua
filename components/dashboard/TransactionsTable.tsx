@@ -72,13 +72,19 @@ export function TransactionsTable({
               >
                 {transaction.type === TransactionType.INCOME ? "+" : "-"}
                 {formatCurrency(transaction.amount)}
-                {transaction.is_recurring && <Repeat className="inline ml-2 h-3 w-3" />}
               </TableCell>
               <TableCell>{formatDate(transaction.date)}</TableCell>
               <TableCell>
-                <Badge className={getCategoryColor(transaction.category || "")}>
-                  {transaction.category || "-"}
-                </Badge>
+                <div className="flex gap-1.5 items-center">
+                  <Badge className={getCategoryColor(transaction.category || "")}>
+                    {transaction.category || "-"}
+                  </Badge>
+                  {transaction.is_recurring && (
+                    <Badge className={cn("py-1", getCategoryColor("recurring"))}>
+                      <Repeat className="h-4 w-4" />
+                    </Badge>
+                  )}
+                </div>
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">

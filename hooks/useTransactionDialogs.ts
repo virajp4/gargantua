@@ -79,6 +79,7 @@ export function useTransactionDialogs({
           category: data.category || null,
           date: data.date,
           description: data.description || null,
+          is_recurring: data.isRecurring || false,
         });
       } else {
         await addTransaction({
@@ -89,7 +90,7 @@ export function useTransactionDialogs({
           date: data.date,
           description: data.description || null,
           payment_method: null,
-          is_recurring: null,
+          is_recurring: data.isRecurring || false,
         });
       }
       setEditingTransaction(null);

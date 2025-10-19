@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useTransactionDialogs } from "@/hooks/useTransactionDialogs";
 import { StatsOverview } from "@/components/dashboard/StatsOverview";
@@ -13,6 +14,14 @@ import { Card } from "@/components/ui/card";
 import { TransactionType } from "@/types";
 import { calculateDashboardStats } from "@/lib/utils";
 import TransactionButtons from "@/components/dashboard/TransactionButtons";
+import { createClient } from "@/lib/supabase/client";
+import {
+  checkAndCreateRecurringTransactions,
+  shouldCheckRecurring,
+  updateRecurringCheckTimestamp,
+} from "@/lib/services/recurring";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const {
@@ -27,6 +36,7 @@ export default function DashboardPage() {
     addTransaction,
     updateTransaction,
     deleteTransaction,
+    refetch,
   } = useTransactions();
   const {
     incomeDialogOpen,
@@ -50,11 +60,27 @@ export default function DashboardPage() {
     deleteTransaction,
   });
   const stats = calculateDashboardStats(allTransactions);
+
+  useEffect(() => {
+    const checkRecurring = async () => {
+      if (shouldCheckRecurring()) {
+        const supabase = createClient() as SupabaseClient;
+        const result = await checkAndCreateRecurringTransactions(supabase);
+        updateRecurringCheckTimestamp();
+        if (result > 0) {
+          toast.success(`${result} recurring transactions added`);
+          refetch();
+        }
+      }
+    };
+    checkRecurring();
+  }, []);
+
   // TODO: Add a max-w-3xl after adding analytics to the table card
   return (
     <div className="flex flex-col gap-5">
       <StatsOverview allTransactions={allTransactions} loading={loading} />
-      <Card className="p-6 flex flex-col gap-4 shadow-sm border-border/50">
+      <Card className="p-6 flex flex-col gap-3 md:gap-4 shadow-sm border-border/50">
         <TransactionButtons handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
         <TransactionFilters filters={filters} setFilters={setFilters} />
         <TransactionsTable

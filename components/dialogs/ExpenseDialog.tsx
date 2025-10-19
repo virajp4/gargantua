@@ -31,6 +31,7 @@ import {
 import { expenseSchema, ExpenseFormData } from "@/lib/validations";
 import { getTodayDate } from "@/lib/utils";
 import { Transaction, getExpenseCategoryOptions, getPaymentMethodOptions } from "@/types";
+import { Repeat } from "lucide-react";
 
 interface ExpenseDialogProps {
   open: boolean;
@@ -106,25 +107,47 @@ export function ExpenseDialog({ open, onOpenChange, onSubmit, editData }: Expens
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-[1fr_auto] gap-2 items-end">
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...field}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isRecurring"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Button
+                        type="button"
+                        variant={field.value ? "default" : "outline"}
+                        size="icon"
+                        onClick={() => field.onChange(!field.value)}
+                        title="Mark as recurring"
+                        className="h-10 w-10"
+                      >
+                        <Repeat className="h-4 w-4" />
+                      </Button>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}

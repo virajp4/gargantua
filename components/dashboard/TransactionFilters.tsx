@@ -1,5 +1,5 @@
 import { TransactionType } from "@/types";
-import { Filters, SortBy, SortOrder } from "@/hooks/useTransactions";
+import { Filters, SortBy } from "@/hooks/useTransactions";
 import { Button } from "@/components/ui/button";
 import {
   ArrowDownAZ,
@@ -9,6 +9,7 @@ import {
   Wallet,
   TrendingUp,
   TrendingDown,
+  Repeat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +31,7 @@ export function TransactionFilters({ filters, setFilters }: TransactionFiltersPr
   };
 
   return (
-    <div className="flex items-center justify-between gap-4 flex-wrap">
+    <div className="flex items-center justify-between gap-3 flex-wrap">
       <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
         <Button
           variant={filters.type === "all" ? "secondary" : "ghost"}
@@ -70,6 +71,19 @@ export function TransactionFilters({ filters, setFilters }: TransactionFiltersPr
           aria-label="Expense transactions"
         >
           <TrendingDown className="h-4 w-4" />
+        </Button>
+        <Button
+          variant={filters.recurringOnly ? "secondary" : "ghost"}
+          size="icon"
+          onClick={() => setFilters({ ...filters, recurringOnly: !filters.recurringOnly })}
+          className={cn(
+            "transition-all duration-200 h-8 w-8",
+            filters.recurringOnly &&
+              "shadow-sm bg-teal-100 dark:bg-teal-900/30 text-teal-900 dark:text-teal-200 hover:bg-teal-100 hover:dark:bg-teal-900/30"
+          )}
+          aria-label="Recurring transactions only"
+        >
+          <Repeat className="h-4 w-4" />
         </Button>
       </div>
       <div className="flex items-center gap-2">

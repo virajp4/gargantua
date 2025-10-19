@@ -55,6 +55,8 @@ export function getCategoryColor(category: string): string {
     high: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300",
     medium: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300",
     low: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300",
+    // Recurring
+    recurring: "bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300",
   };
   return category
     ? colors[category.toLowerCase()]

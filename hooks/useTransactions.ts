@@ -14,6 +14,7 @@ export interface Filters {
   sortBy: SortBy;
   sortOrder: SortOrder;
   category?: string;
+  recurringOnly?: boolean;
 }
 
 interface UseTransactionsReturn {
@@ -125,6 +126,9 @@ export function useTransactions(): UseTransactionsReturn {
     }
     if (filters.category) {
       filtered = filtered.filter((t) => t.category === filters.category);
+    }
+    if (filters.recurringOnly) {
+      filtered = filtered.filter((t) => t.is_recurring === true);
     }
     filtered.sort((a, b) => {
       let comparison = 0;

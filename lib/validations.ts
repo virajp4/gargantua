@@ -6,6 +6,7 @@ export const incomeSchema = z.object({
   category: z.string().optional(),
   date: z.string().min(1, "Date is required"),
   description: z.string().optional(),
+  isRecurring: z.boolean().optional(),
 });
 
 export type IncomeFormData = z.infer<typeof incomeSchema>;

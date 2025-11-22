@@ -2,16 +2,29 @@ import { Database } from "./database.types";
 
 // Public schema types
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-export type ProjectAccess = Database["public"]["Tables"]["project_access"]["Row"];
+export type ProjectAccess =
+  Database["public"]["Tables"]["project_access"]["Row"];
 
 // Gargantua schema types - Unified transactions table
-export type Transaction = Database["gargantua"]["Tables"]["transactions"]["Row"];
-export type TransactionInsert = Database["gargantua"]["Tables"]["transactions"]["Insert"];
-export type TransactionUpdate = Database["gargantua"]["Tables"]["transactions"]["Update"];
+export type Transaction =
+  Database["gargantua"]["Tables"]["transactions"]["Row"];
+export type TransactionInsert =
+  Database["gargantua"]["Tables"]["transactions"]["Insert"];
+export type TransactionUpdate =
+  Database["gargantua"]["Tables"]["transactions"]["Update"];
 
 export type WishlistItem = Database["gargantua"]["Tables"]["wishlist"]["Row"];
-export type WishlistInsert = Database["gargantua"]["Tables"]["wishlist"]["Insert"];
-export type WishlistUpdate = Database["gargantua"]["Tables"]["wishlist"]["Update"];
+export type WishlistInsert =
+  Database["gargantua"]["Tables"]["wishlist"]["Insert"];
+export type WishlistUpdate =
+  Database["gargantua"]["Tables"]["wishlist"]["Update"];
+
+export type InvestmentSettings =
+  Database["gargantua"]["Tables"]["investments"]["Row"];
+export type InvestmentSettingsInsert =
+  Database["gargantua"]["Tables"]["investments"]["Insert"];
+export type InvestmentSettingsUpdate =
+  Database["gargantua"]["Tables"]["investments"]["Update"];
 
 // Enums for easier usage and type safety
 export enum TransactionType {

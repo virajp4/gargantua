@@ -2,9 +2,13 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Transaction, TransactionInsert, TransactionUpdate, TransactionType } from "@/types";
+import {
+  Transaction,
+  TransactionInsert,
+  TransactionUpdate,
+  TransactionType,
+} from "@/types";
 import { createTransactionService } from "@/lib/services/transactions";
-import { SupabaseClient } from "@supabase/supabase-js";
 
 export type SortBy = "date" | "amount";
 export type SortOrder = "asc" | "desc";
@@ -28,8 +32,13 @@ interface UseTransactionsReturn {
   setFilters: (filters: Filters) => void;
   setCurrentPage: (page: number) => void;
   refetch: () => void;
-  addTransaction: (data: Omit<TransactionInsert, "user_id">) => Promise<Transaction>;
-  updateTransaction: (id: string, updates: TransactionUpdate) => Promise<Transaction>;
+  addTransaction: (
+    data: Omit<TransactionInsert, "user_id">
+  ) => Promise<Transaction>;
+  updateTransaction: (
+    id: string,
+    updates: TransactionUpdate
+  ) => Promise<Transaction>;
   deleteTransaction: (id: string, type: string) => Promise<void>;
 }
 
@@ -45,8 +54,11 @@ export function useTransactions(): UseTransactionsReturn {
   });
   const ITEMS_PER_PAGE = 10;
 
-  const supabase = useMemo(() => createClient() as SupabaseClient, []);
-  const transactionService = useMemo(() => createTransactionService(supabase), [supabase]);
+  const supabase = useMemo(() => createClient(), []);
+  const transactionService = useMemo(
+    () => createTransactionService(supabase),
+    [supabase]
+  );
 
   const fetchTransactions = useCallback(async () => {
     try {
@@ -66,7 +78,8 @@ export function useTransactions(): UseTransactionsReturn {
       if (fetchError) throw fetchError;
       setTransactions(data || []);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch transactions";
+      const message =
+        err instanceof Error ? err.message : "Failed to fetch transactions";
       setError(message);
     } finally {
       setLoading(false);
@@ -101,11 +114,15 @@ export function useTransactions(): UseTransactionsReturn {
             } else if (payload.eventType === "UPDATE") {
               const updatedTransaction = payload.new as Transaction;
               setTransactions((prev) =>
-                prev.map((t) => (t.id === updatedTransaction.id ? updatedTransaction : t))
+                prev.map((t) =>
+                  t.id === updatedTransaction.id ? updatedTransaction : t
+                )
               );
             } else if (payload.eventType === "DELETE") {
               const deletedTransaction = payload.old as Transaction;
-              setTransactions((prev) => prev.filter((t) => t.id !== deletedTransaction.id));
+              setTransactions((prev) =>
+                prev.filter((t) => t.id !== deletedTransaction.id)
+              );
             }
           }
         )
@@ -146,23 +163,31 @@ export function useTransactions(): UseTransactionsReturn {
     setCurrentPage(1);
   }, [filters]);
 
-  const totalPages = Math.ceil(filteredAndSortedTransactions.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(
+    filteredAndSortedTransactions.length / ITEMS_PER_PAGE
+  );
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedTransactions = filteredAndSortedTransactions.slice(startIndex, endIndex);
+  const paginatedTransactions = filteredAndSortedTransactions.slice(
+    startIndex,
+    endIndex
+  );
 
   const addTransaction = useCallback(
-    (data: Omit<TransactionInsert, "user_id">) => transactionService.addTransaction(data),
+    (data: Omit<TransactionInsert, "user_id">) =>
+      transactionService.addTransaction(data),
     [transactionService]
   );
 
   const updateTransaction = useCallback(
-    (id: string, updates: TransactionUpdate) => transactionService.updateTransaction(id, updates),
+    (id: string, updates: TransactionUpdate) =>
+      transactionService.updateTransaction(id, updates),
     [transactionService]
   );
 
   const deleteTransaction = useCallback(
-    (id: string, type: string) => transactionService.deleteTransaction(id, type),
+    (id: string, type: string) =>
+      transactionService.deleteTransaction(id, type),
     [transactionService]
   );
 

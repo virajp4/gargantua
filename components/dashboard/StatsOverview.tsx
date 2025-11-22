@@ -81,7 +81,7 @@ function StatsCard({
   const change = savingsRateChange ? Math.abs(savingsRateChange) : 0;
   const isPositive = savingsRateChange ? savingsRateChange >= 0 : false;
   return (
-    <Card className="px-5 py-4 gap-3 shadow-sm hover:shadow-md transition-shadow duration-200 border-border/50">
+    <Card className="px-5 py-4 gap-3">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-muted-foreground">{title}</p>
         <Icon className="h-4 w-4 text-muted-foreground/60" />

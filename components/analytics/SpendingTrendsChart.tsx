@@ -75,11 +75,9 @@ export function SpendingTrendsChart({
   }, [timePeriod, chartData.length]);
 
   return (
-    <Card className="shadow-sm border-border/50">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-lg font-semibold">
-          Spending Trends Over Time
-        </CardTitle>
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
+        <CardTitle className="text-2xl">Spending Trends Over Time</CardTitle>
         <div className="flex gap-2">
           {timePeriods.map(({ value, label }) => (
             <Button

@@ -20,7 +20,6 @@ import {
   shouldCheckRecurring,
   updateRecurringCheckTimestamp,
 } from "@/lib/services/recurring";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { toast } from "sonner";
 
 export default function DashboardPage() {
@@ -64,7 +63,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const checkRecurring = async () => {
       if (shouldCheckRecurring()) {
-        const supabase = createClient() as SupabaseClient;
+        const supabase = createClient();
         const result = await checkAndCreateRecurringTransactions(supabase);
         updateRecurringCheckTimestamp();
         if (result > 0) {
@@ -80,7 +79,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-5">
       <StatsOverview allTransactions={allTransactions} loading={loading} />
-      <Card className="p-6 flex flex-col gap-3 md:gap-4 shadow-sm border-border/50">
+      <Card className="px-6 flex flex-col gap-3 md:gap-4">
         <TransactionButtons
           handleAddIncome={handleAddIncome}
           handleAddExpense={handleAddExpense}

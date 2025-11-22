@@ -1,4 +1,10 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -8,6 +14,36 @@ export type Database = {
   };
   gargantua: {
     Tables: {
+      investments: {
+        Row: {
+          created_at: string;
+          invested_duration: number;
+          return_rate: number;
+          total_duration: number;
+          updated_at: string;
+          user_id: string;
+          yearly_amount: number;
+        };
+        Insert: {
+          created_at?: string;
+          invested_duration?: number;
+          return_rate?: number;
+          total_duration?: number;
+          updated_at?: string;
+          user_id: string;
+          yearly_amount?: number;
+        };
+        Update: {
+          created_at?: string;
+          invested_duration?: number;
+          return_rate?: number;
+          total_duration?: number;
+          updated_at?: string;
+          user_id?: string;
+          yearly_amount?: number;
+        };
+        Relationships: [];
+      };
       transactions: {
         Row: {
           amount: number;
@@ -53,36 +89,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      user_settings: {
-        Row: {
-          created_at: string;
-          currency: string | null;
-          date_format: string | null;
-          id: string;
-          theme: string | null;
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          currency?: string | null;
-          date_format?: string | null;
-          id?: string;
-          theme?: string | null;
-          updated_at?: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          currency?: string | null;
-          date_format?: string | null;
-          id?: string;
-          theme?: string | null;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
       wishlist: {
         Row: {
           cost: number;
@@ -124,10 +130,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      user_has_access: {
-        Args: { check_user_id: string };
-        Returns: boolean;
-      };
+      user_has_access: { Args: { check_user_id: string }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;
@@ -224,7 +227,10 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -245,8 +251,10 @@ export type Tables<
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+      DefaultSchema["Views"])
+  ? (DefaultSchema["Tables"] &
+      DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
       Row: infer R;
     }
     ? R

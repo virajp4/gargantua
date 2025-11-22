@@ -11,7 +11,6 @@ import { createClient } from "@/lib/supabase/client";
 import { createWishlistService } from "@/lib/services/wishlist";
 import { WishlistItem } from "@/types";
 import { WishlistFormData } from "@/lib/validations";
-import { SupabaseClient } from "@supabase/supabase-js";
 
 interface WishlistCardProps {
   balance: number;
@@ -25,7 +24,7 @@ export function WishlistCard({ balance }: WishlistCardProps) {
   const [editingItem, setEditingItem] = useState<WishlistItem | null>(null);
   const [deletingItem, setDeletingItem] = useState<WishlistItem | null>(null);
 
-  const supabase = createClient() as SupabaseClient;
+  const supabase = createClient();
   const wishlistService = createWishlistService(supabase);
 
   useEffect(() => {
@@ -62,7 +61,9 @@ export function WishlistCard({ balance }: WishlistCardProps) {
         priority: data.priority,
         necessity: data.necessity,
       });
-      setWishlist((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+      setWishlist((prev) =>
+        prev.map((item) => (item.id === updated.id ? updated : item))
+      );
     } else {
       const newItem = await wishlistService.addWishlistItem({
         item_name: data.itemName,
@@ -87,9 +88,9 @@ export function WishlistCard({ balance }: WishlistCardProps) {
 
   return (
     <>
-      <Card className="flex flex-col gap-4 p-6 shadow-sm border-border/50">
+      <Card className="flex flex-col gap-4 px-6">
         <div className="flex items-start justify-between">
-          <h2 className="text-xl font-semibold">Wishlist</h2>
+          <h2 className="text-2xl font-semibold">Wishlist</h2>
           <Button onClick={handleAddItem} variant="outline" size="sm">
             <Plus className="h-4 w-4" />
             Add Item

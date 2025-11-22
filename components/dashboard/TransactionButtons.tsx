@@ -12,7 +12,7 @@ export default function TransactionButtons({
 }: TransactionButtonsProps) {
   return (
     <div className="flex items-center justify-between gap-3 flex-wrap">
-      <h2 className="text-xl font-semibold">All Transactions</h2>
+      <h2 className="text-2xl font-semibold">All Transactions</h2>
       <div className="flex gap-2">
         <Button onClick={handleAddIncome} size="sm" variant="outline">
           <Plus className="h-4 w-4" />

@@ -74,11 +74,9 @@ export function MonthComparisonChart({
   };
 
   return (
-    <Card className="shadow-sm border-border/50">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">
-          Month-over-Month Comparison
-        </CardTitle>
+    <Card>
+      <CardHeader className="flex flex-row items-start justify-between">
+        <CardTitle className="text-2xl">Month-over-Month Comparison</CardTitle>
         <div className="flex gap-2">
           {monthPeriods.map(({ value, label }) => (
             <Button

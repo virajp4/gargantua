@@ -9,8 +9,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, formatCurrency, formatDate, getCategoryColor } from "@/lib/utils";
-import { Pencil, Trash2, Repeat, ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils/formatting";
+import { getCategoryColor } from "@/lib/utils/category-colors";
+import {
+  Pencil,
+  Trash2,
+  Repeat,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Transaction, TransactionType } from "@/types";
 
 interface TransactionsTableProps {
@@ -67,7 +75,9 @@ export function TransactionsTable({
               <TableCell
                 className={cn(
                   "font-semibold text-right",
-                  transaction.type === TransactionType.INCOME ? "text-green-600" : "text-red-600"
+                  transaction.type === TransactionType.INCOME
+                    ? "text-green-600"
+                    : "text-red-600"
                 )}
               >
                 {transaction.type === TransactionType.INCOME ? "+" : "-"}
@@ -76,11 +86,15 @@ export function TransactionsTable({
               <TableCell>{formatDate(transaction.date)}</TableCell>
               <TableCell>
                 <div className="flex gap-1.5 items-center">
-                  <Badge className={getCategoryColor(transaction.category || "")}>
+                  <Badge
+                    className={getCategoryColor(transaction.category || "")}
+                  >
                     {transaction.category || "-"}
                   </Badge>
                   {transaction.is_recurring && (
-                    <Badge className={cn("py-1", getCategoryColor("recurring"))}>
+                    <Badge
+                      className={cn("py-1", getCategoryColor("recurring"))}
+                    >
                       <Repeat className="h-4 w-4" />
                     </Badge>
                   )}
@@ -88,10 +102,18 @@ export function TransactionsTable({
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" onClick={() => onEdit(transaction)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(transaction)}
+                  >
                     <Pencil />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(transaction)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDelete(transaction)}
+                  >
                     <Trash2 className="text-red-600" />
                   </Button>
                 </div>

@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { incomeSchema, IncomeFormData } from "@/lib/validations";
-import { getTodayDate } from "@/lib/utils";
+import { getTodayDate } from "@/lib/utils/formatting";
 import { Transaction, getIncomeSourceOptions } from "@/types";
 import { Repeat } from "lucide-react";
 
@@ -40,7 +40,12 @@ interface IncomeDialogProps {
   editData?: Transaction;
 }
 
-export function IncomeDialog({ open, onOpenChange, onSubmit, editData }: IncomeDialogProps) {
+export function IncomeDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  editData,
+}: IncomeDialogProps) {
   const form = useForm<IncomeFormData>({
     resolver: zodResolver(incomeSchema),
     defaultValues: {
@@ -93,7 +98,10 @@ export function IncomeDialog({ open, onOpenChange, onSubmit, editData }: IncomeD
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-3"
+          >
             <FormField
               control={form.control}
               name="description"
@@ -121,7 +129,9 @@ export function IncomeDialog({ open, onOpenChange, onSubmit, editData }: IncomeD
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            field.onChange(parseFloat(e.target.value) || 0)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -189,8 +199,16 @@ export function IncomeDialog({ open, onOpenChange, onSubmit, editData }: IncomeD
                 )}
               />
               <DialogFooter>
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? "Saving..." : editData ? "Update" : "Add Income"}
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting
+                    ? "Saving..."
+                    : editData
+                    ? "Update"
+                    : "Add Income"}
                 </Button>
               </DialogFooter>
             </div>

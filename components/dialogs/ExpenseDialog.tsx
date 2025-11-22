@@ -29,8 +29,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { expenseSchema, ExpenseFormData } from "@/lib/validations";
-import { getTodayDate } from "@/lib/utils";
-import { Transaction, getExpenseCategoryOptions, getPaymentMethodOptions } from "@/types";
+import { getTodayDate } from "@/lib/utils/formatting";
+import {
+  Transaction,
+  getExpenseCategoryOptions,
+  getPaymentMethodOptions,
+} from "@/types";
 import { Repeat } from "lucide-react";
 
 interface ExpenseDialogProps {
@@ -40,7 +44,12 @@ interface ExpenseDialogProps {
   editData?: Transaction;
 }
 
-export function ExpenseDialog({ open, onOpenChange, onSubmit, editData }: ExpenseDialogProps) {
+export function ExpenseDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  editData,
+}: ExpenseDialogProps) {
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
@@ -93,7 +102,10 @@ export function ExpenseDialog({ open, onOpenChange, onSubmit, editData }: Expens
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-3"
+          >
             <FormField
               control={form.control}
               name="description"
@@ -120,7 +132,9 @@ export function ExpenseDialog({ open, onOpenChange, onSubmit, editData }: Expens
                         step="0.01"
                         placeholder="0.00"
                         {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value) || 0)
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -163,7 +177,10 @@ export function ExpenseDialog({ open, onOpenChange, onSubmit, editData }: Expens
                       </FormControl>
                       <SelectContent>
                         {getExpenseCategoryOptions().map((category) => (
-                          <SelectItem key={category.value} value={category.value}>
+                          <SelectItem
+                            key={category.value}
+                            value={category.value}
+                          >
                             {category.label}
                           </SelectItem>
                         ))}
@@ -213,8 +230,16 @@ export function ExpenseDialog({ open, onOpenChange, onSubmit, editData }: Expens
                 )}
               />
               <DialogFooter>
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? "Saving..." : editData ? "Update" : "Add Expense"}
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting
+                    ? "Saving..."
+                    : editData
+                    ? "Update"
+                    : "Add Expense"}
                 </Button>
               </DialogFooter>
             </div>

@@ -1,7 +1,8 @@
 import { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { calculateDashboardStats, formatCurrency } from "@/lib/utils";
+import { calculateDashboardStats } from "@/lib/utils/dashboard";
+import { formatCurrency } from "@/lib/utils/formatting";
 import { cn } from "@/lib/utils";
 import { Wallet, TrendingUp, TrendingDown, Percent } from "lucide-react";
 import { Transaction } from "@/types";
@@ -11,9 +12,17 @@ interface StatsOverviewProps {
   loading: boolean;
 }
 
-export function StatsOverview({ allTransactions, loading }: StatsOverviewProps) {
-  const { balance, monthlyIncome, monthlyExpenses, monthlySavings, savingsRateChange } =
-    calculateDashboardStats(allTransactions);
+export function StatsOverview({
+  allTransactions,
+  loading,
+}: StatsOverviewProps) {
+  const {
+    balance,
+    monthlyIncome,
+    monthlyExpenses,
+    monthlySavings,
+    savingsRateChange,
+  } = calculateDashboardStats(allTransactions);
   const savingsRateChangeValue = parseFloat(savingsRateChange);
 
   if (loading) {
@@ -27,7 +36,11 @@ export function StatsOverview({ allTransactions, loading }: StatsOverviewProps) 
   }
   return (
     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-      <StatsCard title="Current Balance" value={formatCurrency(balance)} Icon={Wallet} />
+      <StatsCard
+        title="Current Balance"
+        value={formatCurrency(balance)}
+        Icon={Wallet}
+      />
       <StatsCard
         title="Monthly Income"
         value={formatCurrency(monthlyIncome)}
@@ -58,7 +71,13 @@ interface StatsCardProps {
   valueClassName?: string;
 }
 
-function StatsCard({ title, value, Icon, savingsRateChange, valueClassName }: StatsCardProps) {
+function StatsCard({
+  title,
+  value,
+  Icon,
+  savingsRateChange,
+  valueClassName,
+}: StatsCardProps) {
   const change = savingsRateChange ? Math.abs(savingsRateChange) : 0;
   const isPositive = savingsRateChange ? savingsRateChange >= 0 : false;
   return (
@@ -68,12 +87,21 @@ function StatsCard({ title, value, Icon, savingsRateChange, valueClassName }: St
         <Icon className="h-4 w-4 text-muted-foreground/60" />
       </div>
       <div className="flex items-end gap-2">
-        <p className={cn("text-2xl font-semibold tracking-tight", valueClassName)}>{value}</p>
+        <p
+          className={cn(
+            "text-2xl font-semibold tracking-tight",
+            valueClassName
+          )}
+        >
+          {value}
+        </p>
         {savingsRateChange !== undefined && (
           <p
             className={cn(
               "text-sm font-medium pb-0.5",
-              isPositive ? "text-green-600 dark:text-green-500" : "text-red-600 dark:text-red-500"
+              isPositive
+                ? "text-green-600 dark:text-green-500"
+                : "text-red-600 dark:text-red-500"
             )}
           >
             {isPositive ? "+" : "-"}

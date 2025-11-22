@@ -1,4 +1,11 @@
+"use client";
+
+import { useTransactions } from "@/hooks/useTransactions";
+import { SpendingTrendsChart } from "@/components/analytics/SpendingTrendsChart";
+import { MonthComparisonChart } from "@/components/analytics/MonthComparisonChart";
+
 export default function AnalyticsPage() {
+  const { allTransactions, loading: transactionsLoading } = useTransactions();
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -7,10 +14,14 @@ export default function AnalyticsPage() {
           Visualize your spending patterns and financial trends
         </p>
       </div>
-
-      <div className="rounded-lg border bg-card p-6">
-        <p className="text-muted-foreground">Analytics coming soon...</p>
-      </div>
+      <SpendingTrendsChart
+        transactions={allTransactions}
+        loading={transactionsLoading}
+      />
+      <MonthComparisonChart
+        transactions={allTransactions}
+        loading={transactionsLoading}
+      />
     </div>
   );
 }

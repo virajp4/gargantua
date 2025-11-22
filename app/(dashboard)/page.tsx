@@ -12,7 +12,7 @@ import { ExpenseDialog } from "@/components/dialogs/ExpenseDialog";
 import { DeleteConfirmationDialog } from "@/components/dialogs/DeleteConfirmationDialog";
 import { Card } from "@/components/ui/card";
 import { TransactionType } from "@/types";
-import { calculateDashboardStats } from "@/lib/utils";
+import { calculateDashboardStats } from "@/lib/utils/dashboard";
 import TransactionButtons from "@/components/dashboard/TransactionButtons";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -81,7 +81,10 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-5">
       <StatsOverview allTransactions={allTransactions} loading={loading} />
       <Card className="p-6 flex flex-col gap-3 md:gap-4 shadow-sm border-border/50">
-        <TransactionButtons handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
+        <TransactionButtons
+          handleAddIncome={handleAddIncome}
+          handleAddExpense={handleAddExpense}
+        />
         <TransactionFilters filters={filters} setFilters={setFilters} />
         <TransactionsTable
           transactions={transactions}
@@ -99,7 +102,9 @@ export default function DashboardPage() {
         onOpenChange={setIncomeDialogOpen}
         onSubmit={handleIncomeSubmit}
         editData={
-          editingTransaction?.type === TransactionType.INCOME ? editingTransaction : undefined
+          editingTransaction?.type === TransactionType.INCOME
+            ? editingTransaction
+            : undefined
         }
       />
       <ExpenseDialog
@@ -107,7 +112,9 @@ export default function DashboardPage() {
         onOpenChange={setExpenseDialogOpen}
         onSubmit={handleExpenseSubmit}
         editData={
-          editingTransaction?.type === TransactionType.EXPENSE ? editingTransaction : undefined
+          editingTransaction?.type === TransactionType.EXPENSE
+            ? editingTransaction
+            : undefined
         }
       />
       <DeleteConfirmationDialog
@@ -115,7 +122,9 @@ export default function DashboardPage() {
         onOpenChange={setDeleteDialogOpen}
         onConfirm={confirmDelete}
         title={`Delete ${
-          deletingTransaction?.type === TransactionType.INCOME ? "Income" : "Expense"
+          deletingTransaction?.type === TransactionType.INCOME
+            ? "Income"
+            : "Expense"
         }`}
         description={`Are you sure you want to delete this ${deletingTransaction?.type} entry? This action cannot be undone.`}
       />

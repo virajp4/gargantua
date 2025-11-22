@@ -9,12 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  formatCurrency,
-  calculatePurchaseStatus,
-  getPriorityColor,
-  getNecessityColor,
-} from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils/formatting";
+import { calculatePurchaseStatus } from "@/lib/utils/wishlist";
+import { getPriorityColor, getNecessityColor } from "@/lib/utils/category-colors";
 import { getPriorityLabel, getNecessityLabel } from "@/types";
 import { Pencil, Trash2 } from "lucide-react";
 import { WishlistItem } from "@/types";

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useTransactionDialogs } from "@/hooks/useTransactionDialogs";
 import { StatsOverview } from "@/components/dashboard/StatsOverview";
@@ -14,13 +13,6 @@ import { Card } from "@/components/ui/card";
 import { TransactionType } from "@/types";
 import { calculateDashboardStats } from "@/lib/utils/dashboard";
 import TransactionButtons from "@/components/dashboard/TransactionButtons";
-import { createClient } from "@/lib/supabase/client";
-import {
-  checkAndCreateRecurringTransactions,
-  shouldCheckRecurring,
-  updateRecurringCheckTimestamp,
-} from "@/lib/services/recurring";
-import { toast } from "sonner";
 
 export default function DashboardPage() {
   const {
@@ -59,22 +51,6 @@ export default function DashboardPage() {
     deleteTransaction,
   });
   const stats = calculateDashboardStats(allTransactions);
-
-  useEffect(() => {
-    const checkRecurring = async () => {
-      if (shouldCheckRecurring()) {
-        const supabase = createClient();
-        const result = await checkAndCreateRecurringTransactions(supabase);
-        updateRecurringCheckTimestamp();
-        if (result > 0) {
-          toast.success(`${result} recurring transactions added`);
-          refetch();
-        }
-      }
-    };
-    checkRecurring();
-  }, []);
-
   // TODO: Add a max-w-3xl after adding analytics to the table card
   return (
     <div className="flex flex-col gap-5">

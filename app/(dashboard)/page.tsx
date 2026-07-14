@@ -19,6 +19,7 @@ export default function DashboardPage() {
     transactions,
     allTransactions,
     loading,
+    error,
     currentPage,
     totalPages,
     filters,
@@ -27,7 +28,6 @@ export default function DashboardPage() {
     addTransaction,
     updateTransaction,
     deleteTransaction,
-    refetch,
   } = useTransactions();
   const {
     incomeDialogOpen,
@@ -55,6 +55,9 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-5">
       <StatsOverview allTransactions={allTransactions} loading={loading} />
+      {error ? (
+        <p className="text-sm text-destructive" role="alert">{error}</p>
+      ) : null}
       <Card className="px-6 flex flex-col gap-3 md:gap-4">
         <TransactionButtons
           handleAddIncome={handleAddIncome}

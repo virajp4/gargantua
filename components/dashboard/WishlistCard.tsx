@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -24,19 +24,22 @@ export function WishlistCard({ balance }: WishlistCardProps) {
   const [editingItem, setEditingItem] = useState<WishlistItem | null>(null);
   const [deletingItem, setDeletingItem] = useState<WishlistItem | null>(null);
 
-  const supabase = createClient();
-  const wishlistService = createWishlistService(supabase);
+  const supabase = useMemo(() => createClient(), []);
+  const wishlistService = useMemo(() => createWishlistService(supabase), [supabase]);
+
+  const loadWishlist = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await wishlistService.fetchWishlist();
+      setWishlist(data);
+    } finally {
+      setLoading(false);
+    }
+  }, [wishlistService]);
 
   useEffect(() => {
-    loadWishlist();
-  }, []);
-
-  const loadWishlist = async () => {
-    setLoading(true);
-    const data = await wishlistService.fetchWishlist();
-    setWishlist(data);
-    setLoading(false);
-  };
+    void loadWishlist();
+  }, [loadWishlist]);
 
   const handleAddItem = () => {
     setEditingItem(null);
@@ -71,7 +74,11 @@ export function WishlistCard({ balance }: WishlistCardProps) {
         priority: data.priority,
         necessity: data.necessity,
       });
-      setWishlist((prev) => [newItem, ...prev]);
+      setWishlist((prev) =>
+        [newItem, ...prev].sort(
+          (a, b) => b.priority - a.priority || b.necessity - a.necessity
+        )
+      );
     }
     setDialogOpen(false);
     setEditingItem(null);

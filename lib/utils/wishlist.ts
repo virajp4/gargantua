@@ -14,7 +14,7 @@ export function calculatePurchaseStatus(
   balance: number
 ) {
   const SAFE_SPEND_RATIO = 0.15;
-  const safeSpendLimit = balance * SAFE_SPEND_RATIO;
+  const safeSpendLimit = Math.max(0, balance) * SAFE_SPEND_RATIO;
   const isAffordable = balance >= cost;
   const isWithinSafeSpend = cost <= safeSpendLimit;
   const weights = {
@@ -37,7 +37,9 @@ export function calculatePurchaseStatus(
   const affordabilityWeight =
     cost <= safeSpendLimit
       ? 10
-      : Math.max(0, 10 - ((cost - safeSpendLimit) / safeSpendLimit) * 5);
+      : safeSpendLimit === 0
+        ? 0
+        : Math.max(0, 10 - ((cost - safeSpendLimit) / safeSpendLimit) * 5);
 
   const purchaseScore = Math.round(
     (necessityWeight * weights.necessity +

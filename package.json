@@ -7,6 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck",
     "types:generate": "supabase gen types typescript --linked --schema public --schema gargantua > types/database.types.ts"
   },
   "dependencies": {

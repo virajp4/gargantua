@@ -92,12 +92,13 @@ export function useTransactions(): UseTransactionsReturn {
 
   useEffect(() => {
     let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
     const setupRealtimeSubscription = async () => {
       const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) return;
+      if (cancelled || !userData.user) return;
       const userId = userData.user.id;
 
-      channel = supabase
+      const nextChannel = supabase
         .channel(`transactions-${userId}`)
         .on(
           "postgres_changes",
@@ -110,7 +111,10 @@ export function useTransactions(): UseTransactionsReturn {
           (payload) => {
             if (payload.eventType === "INSERT") {
               const newTransaction = payload.new as Transaction;
-              setTransactions((prev) => [newTransaction, ...prev]);
+              setTransactions((prev) => [
+                newTransaction,
+                ...prev.filter((item) => item.id !== newTransaction.id),
+              ]);
             } else if (payload.eventType === "UPDATE") {
               const updatedTransaction = payload.new as Transaction;
               setTransactions((prev) =>
@@ -127,11 +131,17 @@ export function useTransactions(): UseTransactionsReturn {
           }
         )
         .subscribe();
+      if (cancelled) {
+        await nextChannel.unsubscribe();
+      } else {
+        channel = nextChannel;
+      }
     };
-    setupRealtimeSubscription();
+    void setupRealtimeSubscription();
     return () => {
+      cancelled = true;
       if (channel) {
-        channel.unsubscribe();
+        void channel.unsubscribe();
       }
     };
   }, [supabase]);
@@ -166,6 +176,9 @@ export function useTransactions(): UseTransactionsReturn {
   const totalPages = Math.ceil(
     filteredAndSortedTransactions.length / ITEMS_PER_PAGE
   );
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(Math.max(page, 1), Math.max(totalPages, 1)));
+  }, [totalPages]);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedTransactions = filteredAndSortedTransactions.slice(
@@ -174,20 +187,28 @@ export function useTransactions(): UseTransactionsReturn {
   );
 
   const addTransaction = useCallback(
-    (data: Omit<TransactionInsert, "user_id">) =>
-      transactionService.addTransaction(data),
+    async (data: Omit<TransactionInsert, "user_id">) => {
+      const created = await transactionService.addTransaction(data);
+      setTransactions((prev) => [created, ...prev.filter((item) => item.id !== created.id)]);
+      return created;
+    },
     [transactionService]
   );
 
   const updateTransaction = useCallback(
-    (id: string, updates: TransactionUpdate) =>
-      transactionService.updateTransaction(id, updates),
+    async (id: string, updates: TransactionUpdate) => {
+      const updated = await transactionService.updateTransaction(id, updates);
+      setTransactions((prev) => prev.map((item) => item.id === updated.id ? updated : item));
+      return updated;
+    },
     [transactionService]
   );
 
   const deleteTransaction = useCallback(
-    (id: string, type: string) =>
-      transactionService.deleteTransaction(id, type),
+    async (id: string, type: string) => {
+      await transactionService.deleteTransaction(id, type);
+      setTransactions((prev) => prev.filter((item) => item.id !== id));
+    },
     [transactionService]
   );
 

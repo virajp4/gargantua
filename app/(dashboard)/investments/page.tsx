@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createInvestmentService } from "@/lib/services/investments";
 import { Button } from "@/components/ui/button";
@@ -39,20 +39,11 @@ export default function InvestmentsPage() {
   const [totalDuration, setTotalDuration] = useState<number>(10);
 
   // Calculated Data
-  const [tableData, setTableData] = useState<InvestmentRow[]>([]);
 
-  const supabase = createClient();
-  const investmentService = createInvestmentService(supabase);
+  const supabase = useMemo(() => createClient(), []);
+  const investmentService = useMemo(() => createInvestmentService(supabase), [supabase]);
 
-  useEffect(() => {
-    loadSettings();
-  }, []);
-
-  useEffect(() => {
-    calculateTable();
-  }, [yearlyAmount, returnRate, investedDuration, totalDuration]);
-
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     try {
       setLoading(true);
       const settings = await investmentService.getInvestmentSettings();
@@ -67,7 +58,11 @@ export default function InvestmentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [investmentService]);
+
+  useEffect(() => {
+    void loadSettings();
+  }, [loadSettings]);
 
   const handleSave = async () => {
     if (totalDuration < investedDuration) {
@@ -93,7 +88,7 @@ export default function InvestmentsPage() {
     }
   };
 
-  const calculateTable = () => {
+  const tableData = useMemo(() => {
     const data: InvestmentRow[] = [];
     let investedSoFar = 0;
     let marketValue = 0;
@@ -125,8 +120,8 @@ export default function InvestmentsPage() {
       });
     }
 
-    setTableData(data);
-  };
+    return data;
+  }, [yearlyAmount, returnRate, investedDuration, totalDuration]);
 
   const formatMoney = (amount: number) => {
     return new Intl.NumberFormat("en-IN", {
@@ -185,7 +180,9 @@ export default function InvestmentsPage() {
                   id="amount"
                   type="number"
                   value={yearlyAmount || ""}
-                  onChange={(e) => setYearlyAmount(Number(e.target.value))}
+                  min={0}
+                  step="1000"
+                  onChange={(e) => setYearlyAmount(Math.max(0, Number(e.target.value)))}
                   placeholder="e.g. 100000"
                 />
               ) : (
@@ -203,7 +200,10 @@ export default function InvestmentsPage() {
                   id="rate"
                   type="number"
                   value={returnRate || ""}
-                  onChange={(e) => setReturnRate(Number(e.target.value))}
+                  min={0}
+                  max={100}
+                  step="0.1"
+                  onChange={(e) => setReturnRate(Math.min(100, Math.max(0, Number(e.target.value))))}
                   placeholder="e.g. 12"
                 />
               ) : (
@@ -224,8 +224,9 @@ export default function InvestmentsPage() {
                   value={investedDuration || ""}
                   onChange={(e) => {
                     const val = Number(e.target.value);
-                    setInvestedDuration(val);
-                    if (val > totalDuration) setTotalDuration(val);
+                    const safeVal = Math.max(1, Math.floor(val));
+                    setInvestedDuration(safeVal);
+                    if (safeVal > totalDuration) setTotalDuration(safeVal);
                   }}
                   placeholder="e.g. 10"
                 />
@@ -244,7 +245,9 @@ export default function InvestmentsPage() {
                   id="totalDuration"
                   type="number"
                   value={totalDuration || ""}
-                  onChange={(e) => setTotalDuration(Number(e.target.value))}
+                  min={investedDuration}
+                  max={100}
+                  onChange={(e) => setTotalDuration(Math.min(100, Math.max(investedDuration, Math.floor(Number(e.target.value)))))}
                   placeholder="e.g. 30"
                 />
               ) : (

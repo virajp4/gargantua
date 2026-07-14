@@ -69,12 +69,12 @@ export function groupTransactionsByDay(
   days: number = 30
 ): { date: string; income: number; expenses: number }[] {
   const now = new Date();
-  const startDate = subDays(now, days);
+  const startDate = subDays(now, days - 1);
 
   // Create a map of all dates in range
   const dateMap = new Map<string, { income: number; expenses: number }>();
 
-  for (let i = 0; i <= days; i++) {
+  for (let i = 0; i < days; i++) {
     const date = subDays(now, i);
     const dateStr = format(date, "yyyy-MM-dd");
     dateMap.set(dateStr, { income: 0, expenses: 0 });

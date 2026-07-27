@@ -5,9 +5,10 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const requestedNext = searchParams.get("next") ?? "/";
-  const next = requestedNext.startsWith("/") && !requestedNext.startsWith("//")
-    ? requestedNext
-    : "/";
+  const next =
+    requestedNext.startsWith("/") && !requestedNext.startsWith("//")
+      ? requestedNext
+      : "/";
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -17,7 +18,8 @@ export async function GET(request: Request) {
       const authorizedEmail = process.env.NEXT_PUBLIC_AUTHORIZED_EMAIL;
       const authorizedUserId = process.env.NEXT_PUBLIC_AUTHORIZED_USER_ID;
       const isAuthorized = Boolean(
-        user && (user.email === authorizedEmail || user.id === authorizedUserId)
+        user &&
+        (user.email === authorizedEmail || user.id === authorizedUserId),
       );
 
       if (!isAuthorized) {

@@ -43,8 +43,12 @@ export default function LoginPage() {
       </div>
       <div className="relative z-10 w-full max-w-md animate-in fade-in zoom-in duration-300 backdrop-blur-xl bg-black/40 border border-white/10 rounded-2xl p-6 shadow-2xl flex flex-col gap-6">
         <div className="text-center space-y-1">
-          <h1 className="text-4xl font-semibold text-white tracking-tight">Gargantua</h1>
-          <p className="text-base text-gray-300">Private Personal Finance Tracker</p>
+          <h1 className="text-4xl font-semibold text-white tracking-tight">
+            Gargantua
+          </h1>
+          <p className="text-base text-gray-300">
+            Private Personal Finance Tracker
+          </p>
         </div>
         <div className="flex flex-col gap-4">
           <Button
@@ -75,7 +79,8 @@ export default function LoginPage() {
             </div>
           </Button>
           <p className="text-xs text-center text-gray-400">
-            This is a private application. Access is restricted to authorized users only.
+            This is a private application. Access is restricted to authorized
+            users only.
           </p>
         </div>
       </div>

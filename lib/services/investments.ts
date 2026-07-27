@@ -45,7 +45,7 @@ export class InvestmentService {
     settings: Omit<
       InvestmentSettingsInsert,
       "user_id" | "created_at" | "updated_at"
-    >
+    >,
   ): Promise<InvestmentSettings> {
     try {
       const userId = await this.getUserId();

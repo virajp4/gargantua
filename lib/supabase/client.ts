@@ -8,6 +8,6 @@ export function createClient(): SupabaseClient {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
     {
       db: { schema: getSchemaName() },
-    }
+    },
   ) as SupabaseClient;
 }

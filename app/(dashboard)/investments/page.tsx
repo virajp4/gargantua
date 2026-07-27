@@ -41,7 +41,10 @@ export default function InvestmentsPage() {
   // Calculated Data
 
   const supabase = useMemo(() => createClient(), []);
-  const investmentService = useMemo(() => createInvestmentService(supabase), [supabase]);
+  const investmentService = useMemo(
+    () => createInvestmentService(supabase),
+    [supabase],
+  );
 
   const loadSettings = useCallback(async () => {
     try {
@@ -67,7 +70,7 @@ export default function InvestmentsPage() {
   const handleSave = async () => {
     if (totalDuration < investedDuration) {
       toast.error(
-        "Total duration must be greater than or equal to invested duration"
+        "Total duration must be greater than or equal to invested duration",
       );
       return;
     }
@@ -182,7 +185,9 @@ export default function InvestmentsPage() {
                   value={yearlyAmount || ""}
                   min={0}
                   step="1000"
-                  onChange={(e) => setYearlyAmount(Math.max(0, Number(e.target.value)))}
+                  onChange={(e) =>
+                    setYearlyAmount(Math.max(0, Number(e.target.value)))
+                  }
                   placeholder="e.g. 100000"
                 />
               ) : (
@@ -203,7 +208,11 @@ export default function InvestmentsPage() {
                   min={0}
                   max={100}
                   step="0.1"
-                  onChange={(e) => setReturnRate(Math.min(100, Math.max(0, Number(e.target.value))))}
+                  onChange={(e) =>
+                    setReturnRate(
+                      Math.min(100, Math.max(0, Number(e.target.value))),
+                    )
+                  }
                   placeholder="e.g. 12"
                 />
               ) : (
@@ -247,7 +256,17 @@ export default function InvestmentsPage() {
                   value={totalDuration || ""}
                   min={investedDuration}
                   max={100}
-                  onChange={(e) => setTotalDuration(Math.min(100, Math.max(investedDuration, Math.floor(Number(e.target.value)))))}
+                  onChange={(e) =>
+                    setTotalDuration(
+                      Math.min(
+                        100,
+                        Math.max(
+                          investedDuration,
+                          Math.floor(Number(e.target.value)),
+                        ),
+                      ),
+                    )
+                  }
                   placeholder="e.g. 30"
                 />
               ) : (

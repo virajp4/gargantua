@@ -22,7 +22,7 @@ type MonthlyData = {
  */
 export function groupTransactionsByMonth(
   transactions: Transaction[],
-  monthsCount: number = 6
+  monthsCount: number = 6,
 ): MonthlyData[] {
   const now = new Date();
   const months = eachMonthOfInterval({
@@ -66,7 +66,7 @@ export function groupTransactionsByMonth(
  */
 export function groupTransactionsByDay(
   transactions: Transaction[],
-  days: number = 30
+  days: number = 30,
 ): { date: string; income: number; expenses: number }[] {
   const now = new Date();
   const startDate = subDays(now, days - 1);

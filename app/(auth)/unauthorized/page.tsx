@@ -33,7 +33,9 @@ export default function UnauthorizedPage() {
             <ShieldAlert className="h-8 w-8 text-red-400" />
           </div>
           <div className="space-y-1">
-            <h1 className="text-3xl font-semibold text-white tracking-tight">Access Denied</h1>
+            <h1 className="text-3xl font-semibold text-white tracking-tight">
+              Access Denied
+            </h1>
             <p className="text-base text-gray-300">
               You are not authorized to access this application
             </p>
@@ -42,8 +44,8 @@ export default function UnauthorizedPage() {
         <div className="flex flex-col gap-4">
           <div className="p-4 rounded-lg bg-white/5 border border-white/10">
             <p className="text-sm text-gray-300 text-center">
-              This is a private personal finance tracker. Only authorized users can access this
-              application.
+              This is a private personal finance tracker. Only authorized users
+              can access this application.
             </p>
           </div>
           <Button

@@ -11,9 +11,12 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils/formatting";
 import { calculatePurchaseStatus } from "@/lib/utils/wishlist";
-import { getPriorityColor, getNecessityColor } from "@/lib/utils/category-colors";
+import {
+  getPriorityColor,
+  getNecessityColor,
+} from "@/lib/utils/category-colors";
 import { getPriorityLabel, getNecessityLabel } from "@/types";
-import { Pencil, Trash2 } from "lucide-react";
+import { ReceiptText, Pencil, Trash2 } from "lucide-react";
 import { WishlistItem } from "@/types";
 
 interface WishlistTableProps {
@@ -22,6 +25,7 @@ interface WishlistTableProps {
   balance: number;
   onEdit: (item: WishlistItem) => void;
   onDelete: (item: WishlistItem) => void;
+  onConvertToExpense: (item: WishlistItem) => void;
 }
 
 export function WishlistTable({
@@ -30,6 +34,7 @@ export function WishlistTable({
   balance,
   onEdit,
   onDelete,
+  onConvertToExpense,
 }: WishlistTableProps) {
   if (loading) {
     return (
@@ -59,22 +64,20 @@ export function WishlistTable({
             <TableHead className="w-[150px] text-right">Cost</TableHead>
             <TableHead>Score</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
+            <TableHead className="w-[140px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {activeItems.map((item) => {
             const { priority, necessity, cost, id, item_name } = item;
-            const { purchaseScore, status, statusColor } = calculatePurchaseStatus(
-              priority,
-              necessity,
-              cost,
-              balance
-            );
+            const { purchaseScore, status, statusColor } =
+              calculatePurchaseStatus(priority, necessity, cost, balance);
             return (
               <TableRow key={id}>
                 <TableCell>
-                  <Badge className={getPriorityColor(priority)}>{getPriorityLabel(priority)}</Badge>
+                  <Badge className={getPriorityColor(priority)}>
+                    {getPriorityLabel(priority)}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <Badge className={getNecessityColor(necessity)}>
@@ -82,17 +85,36 @@ export function WishlistTable({
                   </Badge>
                 </TableCell>
                 <TableCell>{item_name}</TableCell>
-                <TableCell className="text-right">{formatCurrency(cost)}</TableCell>
+                <TableCell className="text-right">
+                  {formatCurrency(cost)}
+                </TableCell>
                 <TableCell>{purchaseScore.toFixed(1)}</TableCell>
                 <TableCell>
                   <Badge className={statusColor}>{status}</Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => onEdit(item)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onConvertToExpense(item)}
+                      title="Convert to expense"
+                      aria-label={`Convert ${item_name} to an expense`}
+                    >
+                      <ReceiptText className="h-4 w-4 text-blue-600" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onEdit(item)}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onDelete(item)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onDelete(item)}
+                    >
                       <Trash2 className="h-4 w-4 text-red-600" />
                     </Button>
                   </div>

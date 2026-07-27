@@ -1,12 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Transaction, TransactionInsert, TransactionUpdate, TransactionType } from "@/types";
+import {
+  Transaction,
+  TransactionInsert,
+  TransactionUpdate,
+  TransactionType,
+} from "@/types";
 import { IncomeFormData, ExpenseFormData } from "@/lib/validations";
 
 interface UseTransactionDialogsProps {
-  addTransaction: (data: Omit<TransactionInsert, "user_id">) => Promise<Transaction>;
-  updateTransaction: (id: string, updates: TransactionUpdate) => Promise<Transaction>;
+  addTransaction: (
+    data: Omit<TransactionInsert, "user_id">,
+  ) => Promise<Transaction>;
+  updateTransaction: (
+    id: string,
+    updates: TransactionUpdate,
+  ) => Promise<Transaction>;
   deleteTransaction: (id: string, type: TransactionType) => Promise<void>;
 }
 
@@ -40,7 +50,8 @@ export function useTransactionDialogs({
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
   const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
   const [deletingTransaction, setDeletingTransaction] = useState<{
     type: TransactionType;
     id: string;
@@ -66,13 +77,19 @@ export function useTransactionDialogs({
   };
 
   const handleDeleteTransaction = (transaction: Transaction) => {
-    setDeletingTransaction({ type: transaction.type as TransactionType, id: transaction.id });
+    setDeletingTransaction({
+      type: transaction.type as TransactionType,
+      id: transaction.id,
+    });
     setDeleteDialogOpen(true);
   };
 
   const handleIncomeSubmit = async (data: IncomeFormData) => {
     try {
-      if (editingTransaction && editingTransaction.type === TransactionType.INCOME) {
+      if (
+        editingTransaction &&
+        editingTransaction.type === TransactionType.INCOME
+      ) {
         await updateTransaction(editingTransaction.id, {
           amount: data.amount,
           source: data.source,
@@ -101,7 +118,10 @@ export function useTransactionDialogs({
 
   const handleExpenseSubmit = async (data: ExpenseFormData) => {
     try {
-      if (editingTransaction && editingTransaction.type === TransactionType.EXPENSE) {
+      if (
+        editingTransaction &&
+        editingTransaction.type === TransactionType.EXPENSE
+      ) {
         await updateTransaction(editingTransaction.id, {
           amount: data.amount,
           category: data.category,

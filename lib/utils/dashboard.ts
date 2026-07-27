@@ -14,7 +14,7 @@ type DashboardStats = {
  * Includes comparison with previous month's savings rate
  */
 export function calculateDashboardStats(
-  transactions: Transaction[]
+  transactions: Transaction[],
 ): DashboardStats {
   const now = new Date();
   const monthStart = startOfMonth(now);

@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { WishlistTable } from "@/components/dashboard/WishlistTable";
 import { WishlistDialog } from "@/components/dialogs/WishlistDialog";
+import { ExpenseDialog } from "@/components/dialogs/ExpenseDialog";
 import { DeleteConfirmationDialog } from "@/components/dialogs/DeleteConfirmationDialog";
 import { createClient } from "@/lib/supabase/client";
 import { createWishlistService } from "@/lib/services/wishlist";
-import { WishlistItem } from "@/types";
-import { WishlistFormData } from "@/lib/validations";
+import { ExpenseCategory, WishlistItem } from "@/types";
+import { ExpenseFormData, WishlistFormData } from "@/lib/validations";
 
 interface WishlistCardProps {
   balance: number;
@@ -21,11 +22,18 @@ export function WishlistCard({ balance }: WishlistCardProps) {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<WishlistItem | null>(null);
   const [deletingItem, setDeletingItem] = useState<WishlistItem | null>(null);
+  const [convertingItem, setConvertingItem] = useState<WishlistItem | null>(
+    null,
+  );
 
   const supabase = useMemo(() => createClient(), []);
-  const wishlistService = useMemo(() => createWishlistService(supabase), [supabase]);
+  const wishlistService = useMemo(
+    () => createWishlistService(supabase),
+    [supabase],
+  );
 
   const loadWishlist = useCallback(async () => {
     setLoading(true);
@@ -56,6 +64,24 @@ export function WishlistCard({ balance }: WishlistCardProps) {
     setDeleteDialogOpen(true);
   };
 
+  const handleConvertToExpense = (item: WishlistItem) => {
+    setConvertingItem(item);
+    setExpenseDialogOpen(true);
+  };
+
+  const handleExpenseDialogOpenChange = (open: boolean) => {
+    setExpenseDialogOpen(open);
+    if (!open) setConvertingItem(null);
+  };
+
+  const handleConvertExpenseSubmit = async (data: ExpenseFormData) => {
+    if (!convertingItem) return;
+
+    await wishlistService.convertWishlistItemToExpense(convertingItem.id, data);
+    setWishlist((prev) => prev.filter((item) => item.id !== convertingItem.id));
+    setConvertingItem(null);
+  };
+
   const handleSubmit = async (data: WishlistFormData) => {
     if (editingItem) {
       const updated = await wishlistService.updateWishlistItem(editingItem.id, {
@@ -65,7 +91,7 @@ export function WishlistCard({ balance }: WishlistCardProps) {
         necessity: data.necessity,
       });
       setWishlist((prev) =>
-        prev.map((item) => (item.id === updated.id ? updated : item))
+        prev.map((item) => (item.id === updated.id ? updated : item)),
       );
     } else {
       const newItem = await wishlistService.addWishlistItem({
@@ -76,8 +102,8 @@ export function WishlistCard({ balance }: WishlistCardProps) {
       });
       setWishlist((prev) =>
         [newItem, ...prev].sort(
-          (a, b) => b.priority - a.priority || b.necessity - a.necessity
-        )
+          (a, b) => b.priority - a.priority || b.necessity - a.necessity,
+        ),
       );
     }
     setDialogOpen(false);
@@ -109,6 +135,7 @@ export function WishlistCard({ balance }: WishlistCardProps) {
           balance={balance}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onConvertToExpense={handleConvertToExpense}
         />
       </Card>
       <WishlistDialog
@@ -116,6 +143,20 @@ export function WishlistCard({ balance }: WishlistCardProps) {
         onOpenChange={setDialogOpen}
         onSubmit={handleSubmit}
         editData={editingItem}
+      />
+      <ExpenseDialog
+        open={expenseDialogOpen}
+        onOpenChange={handleExpenseDialogOpenChange}
+        onSubmit={handleConvertExpenseSubmit}
+        initialData={
+          convertingItem
+            ? {
+                amount: convertingItem.cost,
+                category: ExpenseCategory.SHOPPING,
+                description: convertingItem.item_name,
+              }
+            : undefined
+        }
       />
       <DeleteConfirmationDialog
         open={deleteDialogOpen}

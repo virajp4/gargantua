@@ -42,6 +42,7 @@ interface ExpenseDialogProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: ExpenseFormData) => Promise<void>;
   editData?: Transaction;
+  initialData?: Partial<ExpenseFormData>;
 }
 
 export function ExpenseDialog({
@@ -49,6 +50,7 @@ export function ExpenseDialog({
   onOpenChange,
   onSubmit,
   editData,
+  initialData,
 }: ExpenseDialogProps) {
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
@@ -81,10 +83,11 @@ export function ExpenseDialog({
           date: getTodayDate(),
           description: "",
           isRecurring: false,
+          ...initialData,
         });
       }
     }
-  }, [open, editData, form]);
+  }, [open, editData, form, initialData]);
 
   const handleSubmit = async (data: ExpenseFormData) => {
     await onSubmit(data);
@@ -238,8 +241,8 @@ export function ExpenseDialog({
                   {form.formState.isSubmitting
                     ? "Saving..."
                     : editData
-                    ? "Update"
-                    : "Add Expense"}
+                      ? "Update"
+                      : "Add Expense"}
                 </Button>
               </DialogFooter>
             </div>

@@ -56,7 +56,9 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-5">
       <StatsOverview allTransactions={allTransactions} loading={loading} />
       {error ? (
-        <p className="text-sm text-destructive" role="alert">{error}</p>
+        <p className="text-sm text-destructive" role="alert">
+          {error}
+        </p>
       ) : null}
       <Card className="px-6 flex flex-col gap-3 md:gap-4">
         <TransactionButtons

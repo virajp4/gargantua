@@ -54,7 +54,7 @@ export function MonthComparisonChart({
     const totalIncome = chartData.reduce((sum, month) => sum + month.income, 0);
     const totalExpenses = chartData.reduce(
       (sum, month) => sum + month.expenses,
-      0
+      0,
     );
     const totalSavings = totalIncome - totalExpenses;
     return { totalIncome, totalExpenses, totalSavings };

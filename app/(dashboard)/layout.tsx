@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
 import { checkAuthorization } from "@/lib/supabase/middleware";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -18,7 +22,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto max-w-7xl py-8 px-4 md:px-6">{children}</main>
+      <main className="container mx-auto max-w-7xl py-8 px-4 md:px-6">
+        {children}
+      </main>
     </div>
   );
 }

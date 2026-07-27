@@ -90,7 +90,7 @@ function StatsCard({
         <p
           className={cn(
             "text-2xl font-semibold tracking-tight",
-            valueClassName
+            valueClassName,
           )}
         >
           {value}
@@ -101,7 +101,7 @@ function StatsCard({
               "text-sm font-medium pb-0.5",
               isPositive
                 ? "text-green-600 dark:text-green-500"
-                : "text-red-600 dark:text-red-500"
+                : "text-red-600 dark:text-red-500",
             )}
           >
             {isPositive ? "+" : "-"}

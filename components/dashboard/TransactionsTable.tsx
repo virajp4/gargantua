@@ -77,7 +77,7 @@ export function TransactionsTable({
                   "font-semibold text-right",
                   transaction.type === TransactionType.INCOME
                     ? "text-green-600"
-                    : "text-red-600"
+                    : "text-red-600",
                 )}
               >
                 {transaction.type === TransactionType.INCOME ? "+" : "-"}

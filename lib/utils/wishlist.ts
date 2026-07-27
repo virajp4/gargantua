@@ -11,7 +11,7 @@ export function calculatePurchaseStatus(
   priority: number,
   necessity: number,
   cost: number,
-  balance: number
+  balance: number,
 ) {
   const SAFE_SPEND_RATIO = 0.15;
   const safeSpendLimit = Math.max(0, balance) * SAFE_SPEND_RATIO;
@@ -28,7 +28,7 @@ export function calculatePurchaseStatus(
     inMin: number,
     inMax: number,
     outMin = 0,
-    outMax = 10
+    outMax = 10,
   ) => ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
 
   const necessityWeight = mapRange(necessity, 1, 5, 2, 10);
@@ -45,7 +45,7 @@ export function calculatePurchaseStatus(
     (necessityWeight * weights.necessity +
       priorityWeight * weights.priority +
       affordabilityWeight * weights.affordability) *
-      10
+      10,
   );
 
   let status: string;

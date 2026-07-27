@@ -207,8 +207,8 @@ export function IncomeDialog({
                   {form.formState.isSubmitting
                     ? "Saving..."
                     : editData
-                    ? "Update"
-                    : "Add Income"}
+                      ? "Update"
+                      : "Add Income"}
                 </Button>
               </DialogFooter>
             </div>

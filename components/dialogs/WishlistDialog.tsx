@@ -29,7 +29,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { wishlistSchema, WishlistFormData } from "@/lib/validations";
-import { WishlistItem, getPriorityOptions, getNecessityOptions, Priority } from "@/types";
+import {
+  WishlistItem,
+  getPriorityOptions,
+  getNecessityOptions,
+  Priority,
+} from "@/types";
 
 interface WishlistDialogProps {
   open: boolean;
@@ -38,7 +43,12 @@ interface WishlistDialogProps {
   editData?: WishlistItem | null;
 }
 
-export function WishlistDialog({ open, onOpenChange, onSubmit, editData }: WishlistDialogProps) {
+export function WishlistDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  editData,
+}: WishlistDialogProps) {
   const form = useForm<WishlistFormData>({
     resolver: zodResolver(wishlistSchema),
     defaultValues: {
@@ -79,13 +89,20 @@ export function WishlistDialog({ open, onOpenChange, onSubmit, editData }: Wishl
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{editData ? "Edit Wishlist Item" : "Add to Wishlist"}</DialogTitle>
+          <DialogTitle>
+            {editData ? "Edit Wishlist Item" : "Add to Wishlist"}
+          </DialogTitle>
           <DialogDescription>
-            {editData ? "Update wishlist item details" : "Add a new item to your wishlist"}
+            {editData
+              ? "Update wishlist item details"
+              : "Add a new item to your wishlist"}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="itemName"
@@ -111,7 +128,9 @@ export function WishlistDialog({ open, onOpenChange, onSubmit, editData }: Wishl
                       step="0.01"
                       placeholder="0.00"
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 0)
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -136,7 +155,10 @@ export function WishlistDialog({ open, onOpenChange, onSubmit, editData }: Wishl
                       </FormControl>
                       <SelectContent>
                         {getPriorityOptions().map((priority) => (
-                          <SelectItem key={priority.value} value={priority.value.toString()}>
+                          <SelectItem
+                            key={priority.value}
+                            value={priority.value.toString()}
+                          >
                             {priority.label}
                           </SelectItem>
                         ))}
@@ -163,7 +185,10 @@ export function WishlistDialog({ open, onOpenChange, onSubmit, editData }: Wishl
                       </FormControl>
                       <SelectContent>
                         {getNecessityOptions().map((necessity) => (
-                          <SelectItem key={necessity.value} value={necessity.value.toString()}>
+                          <SelectItem
+                            key={necessity.value}
+                            value={necessity.value.toString()}
+                          >
                             {necessity.label}
                           </SelectItem>
                         ))}
@@ -174,12 +199,16 @@ export function WishlistDialog({ open, onOpenChange, onSubmit, editData }: Wishl
                 )}
               />
               <DialogFooter>
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={form.formState.isSubmitting}
+                >
                   {form.formState.isSubmitting
                     ? "Saving..."
                     : editData
-                    ? "Update"
-                    : "Add to Wishlist"}
+                      ? "Update"
+                      : "Add to Wishlist"}
                 </Button>
               </DialogFooter>
             </div>
